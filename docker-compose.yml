@@ -1,0 +1,41 @@
+services:
+  ai:
+    build: ./
+    ports:
+      - 8501:8501
+    volumes:
+      - ./data/:/data/
+    env_file: ".env"
+    extra_hosts:
+      - "hearth.local:172.25.26.209"
+
+  pgvector:
+    image: phidata/pgvector:16
+    container_name: pgvector
+    environment:
+      POSTGRES_DB: ai
+      POSTGRES_USER: ai
+      POSTGRES_PASSWORD: ai
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./data_pgvector:/var/lib/postgresql/data
+    # ports:
+    #   - "5532:5432"
+  ollama:
+    image: ollama/ollama:latest
+    # ports:
+    #   - 7869:11434
+    volumes:
+      - ./data_ollama/:/root/.ollama
+    tty: true
+    restart: always
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+           - driver: cdi
+             device_ids:
+                - nvidia.com/gpu=all
