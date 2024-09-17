@@ -24,15 +24,12 @@ def list_devices():
                 continue
         except KeyError:
             pass
-        # Get the area_id from the entity and map it to an area name
-        print(entity)
-        print("-------")
-        # devices.append({
-        #     entity['entity_id']: {
-        #         "state": entity['state'],
-        #         "location": location
-        #     }
-        # })
+        friendly_name = entity.get('attributes', {}).get('friendly_name', 'Unknown')
+        state = entity.get('state', 'Unknown')
+        devices.append({
+            'friendly_name': friendly_name,
+            'state': state
+        })
     return devices
 
 homeassistant_tool = [list_devices,]
