@@ -26,7 +26,9 @@ def list_devices():
             pass
         friendly_name = entity.get('attributes', {}).get('friendly_name', 'Unknown')
         state = entity.get('state', 'Unknown')
+        entity_type = entity['entity_id'].split('.')[0]
         devices.append({
+            'entity_type': entity_type,
             'friendly_name': friendly_name,
             'state': state
         })
