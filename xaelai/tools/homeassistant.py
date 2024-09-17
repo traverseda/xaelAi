@@ -13,7 +13,10 @@ headers = {
 included_device_classes = os.getenv('INCLUDED_DEVICE_CLASSES', 'light,switch,climate,cover,media_player,fan,lock,scene').split(',')
 
 def get_areas():
-    raise NotImplementedError
+    """Retrieve the list of areas using the template API."""
+    template_payload = {"template": "{{ areas() }}"}
+    response = requests.post(f"{hass_url}/api/template", headers=headers, json=template_payload)
+    return response.json()
 
 print(get_areas())
 
