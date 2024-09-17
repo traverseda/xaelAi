@@ -10,7 +10,7 @@ headers = {
     "Content-Type": "application/json"
 }
 
-included_device_classes = os.getenv('INCLUDED_DEVICE_CLASSES', 'light,switch').split(',')
+included_device_classes = os.getenv('INCLUDED_DEVICE_CLASSES', 'light,switch,climate,cover,media_player,fan,lock').split(',')
 
 def list_devices():
     """List actual devices, excluding specified device classes."""
