@@ -20,7 +20,7 @@ def list_devices():
     for entity in response.json():
         # Skip entities with device_class firmware
         try:
-            if entity.get('attributes', {}).get('device_class') not in included_device_classes:
+            if not any(entity['entity_id'].startswith(device_class) for device_class in included_device_classes):
                 continue
         except KeyError:
             pass
