@@ -10,14 +10,17 @@ headers = {
     "Content-Type": "application/json"
 }
 
+excluded_device_classes = os.getenv('EXCLUDED_DEVICE_CLASSES', 'firmware,battery').split(',')
+
 def list_devices():
+    """List actual devices, excluding specified device classes."""
     # Get the areas
     response = requests.get(f"{hass_url}/states", headers=headers)
     devices = []
     for entity in response.json():
         # Skip entities with device_class firmware
         try:
-            if entity['attributes']['device_class'] in {'firmware'}:
+            if entity['attributes']['device_class'] in excluded_device_classes:
                 continue
         except KeyError:
             pass
