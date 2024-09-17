@@ -12,6 +12,12 @@ headers = {
 
 included_device_classes = os.getenv('INCLUDED_DEVICE_CLASSES', 'light,switch,climate,cover,media_player,fan,lock,scene').split(',')
 
+def get_areas():
+    raise NotImplementedError
+
+print(get_areas())
+
+
 def list_devices():
     """List actual devices, excluding specified device classes."""
     # Get the areas
