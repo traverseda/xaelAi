@@ -34,3 +34,7 @@ def list_devices():
 
 homeassistant_tool = [list_devices,]
 
+if __name__ == "__main__":
+    for device in list_devices():
+        print(device)
+
