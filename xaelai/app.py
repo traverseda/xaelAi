@@ -173,9 +173,6 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
         assistant_chat_history = rag_assistant.memory.get_chat_history()
         st.session_state["messages"] = assistant_chat_history if assistant_chat_history else [{"role": "assistant", "content": ""}]
 
-    if prompt := st.chat_input():
-        st.session_state["messages"].append({"role": "user", "content": prompt})
-
     for message in st.session_state["messages"]:
         if message["role"] == "system":
             continue
@@ -192,6 +189,10 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
                 response += delta  # type: ignore
                 resp_container.markdown(response)
             st.session_state["messages"].append({"role": "assistant", "content": response})
+
+    if prompt := st.chat_input():
+        st.session_state["messages"].append({"role": "user", "content": prompt})
+
 
 
 def manage_knowledge_base(rag_assistant: Assistant) -> None:
