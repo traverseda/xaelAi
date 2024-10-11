@@ -106,48 +106,71 @@ class GenericFileStorageBase(AssistantStorage):
         :return: The deserialized data.
         """
         raise NotImplementedError
-    def __init__(self, storage_dir: str):
-        self.storage_dir = UPath(storage_dir)
-        self.storage_dir.mkdir(parents=True, exist_ok=True)
-
     def create(self, run_id: str) -> None:
-        """Create a new YAML file for the given run_id."""
-        file_path = self.storage_dir / f"{run_id}.yaml"
+        """
+        Create a new file for the given run_id.
+
+        :param run_id: The unique identifier for the run.
+        """
+        file_path = self.storage_dir / f"{run_id}.{self.file_extension}"
         file_path.touch(exist_ok=True)
 
     def get_all_run_ids(self, user_id: Optional[str] = None) -> List[str]:
-        """Get all run IDs from the storage."""
-        return [f.stem for f in self.storage_dir.glob("*.yaml")]
+        """
+        Get all run IDs from the storage.
+
+        :param user_id: Optional user identifier to filter runs.
+        :return: A list of run IDs.
+        """
+        return [f.stem for f in self.storage_dir.glob(f"*.{self.file_extension}")]
 
     def get_all_runs(self, user_id: Optional[str] = None) -> List[AssistantRun]:
-        """Get all runs from the storage."""
+        """
+        Get all runs from the storage.
+
+        :param user_id: Optional user identifier to filter runs.
+        :return: A list of AssistantRun objects.
+        """
         runs = []
-        for file_path in self.storage_dir.glob("*.yaml"):
+        for file_path in self.storage_dir.glob(f"*.{self.file_extension}"):
             with file_path.open('r') as file:
-                data = yaml.safe_load(file)
+                data = self.deserialize(file)
                 runs.append(AssistantRun(**data))
         return runs
 
     def read(self, run_id: str) -> Optional[AssistantRun]:
-        """Read an entry from the storage."""
-        file_path = self.storage_dir / f"{run_id}.yaml"
+        """
+        Read an entry from the storage.
+
+        :param run_id: The unique identifier for the run.
+        :return: An AssistantRun object if found, otherwise None.
+        """
+        file_path = self.storage_dir / f"{run_id}.{self.file_extension}"
         if file_path.exists():
             with file_path.open('r') as file:
-                data = yaml.safe_load(file)
+                data = self.deserialize(file)
                 return AssistantRun(**data)
         return None
 
     def upsert(self, row: AssistantRun) -> Optional[AssistantRun]:
-        """Update or insert an entry in the storage."""
-        file_path = self.storage_dir / f"{row.run_id}.yaml"
+        """
+        Update or insert an entry in the storage.
+
+        :param row: The AssistantRun object to upsert.
+        :return: The upserted AssistantRun object.
+        """
+        file_path = self.storage_dir / f"{row.run_id}.{self.file_extension}"
         with file_path.open('w') as file:
-            yaml.safe_dump(row.__dict__, file)
-        return row
+            self.serialize(row.__dict__, file)
         return row
 
     def delete(self, run_id: str) -> None:
-        """Delete an entry from the storage."""
-        file_path = self.storage_dir / f"{run_id}.yaml"
+        """
+        Delete an entry from the storage.
+
+        :param run_id: The unique identifier for the run to delete.
+        """
+        file_path = self.storage_dir / f"{run_id}.{self.file_extension}"
         if file_path.exists():
             file_path.unlink()
 
