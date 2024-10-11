@@ -40,7 +40,26 @@ def main() -> None:
 
     default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
     llm_model = st.sidebar.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
-    # Set assistant_type in session state
+    # Model management feature toggle
+    feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
+
+    if feature_model_manager:
+        st.sidebar.markdown("### Model Management")
+        if st.sidebar.button("Download Model"):
+            try:
+                selected_model = st.session_state["llm_model"]
+                ollama.download(selected_model)
+                st.sidebar.success(f"Model '{selected_model}' downloaded successfully.")
+            except Exception as e:
+                st.sidebar.error(f"Failed to download model: {e}")
+
+        if st.sidebar.button("Delete Model"):
+            try:
+                selected_model = st.session_state["llm_model"]
+                ollama.delete(selected_model)
+                st.sidebar.success(f"Model '{selected_model}' deleted successfully.")
+            except Exception as e:
+                st.sidebar.error(f"Failed to delete model: {e}")
     if "llm_model" not in st.session_state:
         st.session_state["llm_model"] = llm_model
     # Restart the assistant if assistant_type has changed
