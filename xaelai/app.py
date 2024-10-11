@@ -171,7 +171,7 @@ def main() -> None:
             suggested_name = rag_assistant.run(f"Suggest a chat name based on this message: {first_message}")
             st.session_state["suggested_chat_name"] = suggested_name.strip()
             chat_name = st.sidebar.text_input("Chat Name", value=st.session_state["suggested_chat_name"])
-            
+    last_message = st.session_state["messages"][-1]
     if last_message.get("role") == "user":
         question = last_message["content"]
         with st.chat_message("assistant"):
