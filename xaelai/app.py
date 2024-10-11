@@ -196,6 +196,8 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
 
     if prompt := st.chat_input():
         st.session_state["messages"].append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.write(prompt)
 
 
 
