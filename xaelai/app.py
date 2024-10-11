@@ -42,7 +42,8 @@ def main() -> None:
         return
 
     # Create user directory if it doesn't exist
-    user_dir = os.path.join("user_data", user_id)
+    user_data_path = os.getenv("USER_DATA_PATH", "/user_data")
+    user_dir = os.path.join(user_data_path, user_id)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")

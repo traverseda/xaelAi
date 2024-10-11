@@ -6,6 +6,8 @@ services:
     volumes:
       - ./data/:/data/
     env_file: ".env"
+    volumes:
+      - ./data_user/:/user_data/
     extra_hosts:
       - "hearth.local:172.25.26.209"
 
