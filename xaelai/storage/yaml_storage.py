@@ -26,8 +26,8 @@ class InMemoryStorage(AssistantStorage):
 
     def upsert(self, row: AssistantRun) -> Optional[AssistantRun]:
         """Update or insert an entry in the storage."""
-        self.storage[run.run_id] = run.__dict__
-        return run
+        self.storage[row.run_id] = row.__dict__
+        return row
 
     def delete(self, run_id: str) -> None:
         """Delete an entry from the storage."""
