@@ -154,7 +154,6 @@ def main() -> None:
                 response += delta  # type: ignore
                 resp_container.markdown(response)
             st.session_state["messages"].append({"role": "assistant", "content": response})
-            save_chat_history()
 
     # Load knowledge base
     if rag_assistant.knowledge_base:
