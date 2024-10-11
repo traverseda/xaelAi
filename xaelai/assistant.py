@@ -62,11 +62,11 @@ def get_rag_assistant(
         read_chat_history=True,
         prevent_hallucinations=True,
         # add_chat_history_to_messages=True,
-        knowledge_base=knowledge_base,
+        # knowledge_base=knowledge_base,
         add_references_to_prompt=True,
         add_datetime_to_instructions=True,
         )
-    assistant.knowledge_base.load(recreate=False)
+    # assistant.knowledge_base.load(recreate=False)
 
     return assistant
 
