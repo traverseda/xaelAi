@@ -58,9 +58,6 @@ def main() -> None:
         chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
         chat_history = initialize_chat_history(user_id, chat_name)
 
-        # Model selection and management
-        llm_model = select_llm_model()
-        manage_models(llm_model)
 
         # Embeddings model selection
         embeddings_model = select_embeddings_model()
@@ -80,6 +77,9 @@ def main() -> None:
     with tab2:
         # Render settings UI
         settings.render_settings_ui()
+        # Model selection and management
+        llm_model = select_llm_model()
+        manage_models(llm_model)
 
 
 def initialize_chat_history(user_id: str, chat_name: str) -> ChatHistory:
