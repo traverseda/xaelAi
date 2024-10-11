@@ -39,6 +39,8 @@ def restart_assistant():
 
 
 def main() -> None:
+    """Main function to run the Xael AI application."""
+    
     # User identification
     user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
     settings.set_user_id(user_id)
@@ -46,83 +48,116 @@ def main() -> None:
         st.sidebar.warning("Please enter a User ID to continue.")
         return
 
+    # Initialize chat history
     from chat_history import ChatHistory
     chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
+    chat_history = initialize_chat_history(user_id, chat_name)
+
+    # Model selection and management
+    llm_model = select_llm_model()
+    manage_models(llm_model)
+
+    # Embeddings model selection
+    embeddings_model = select_embeddings_model()
+
+    # Initialize or retrieve the assistant
+    rag_assistant = initialize_assistant(llm_model, embeddings_model)
+
+    # Create assistant run and handle chat messages
+    handle_chat_interaction(rag_assistant)
+
+    # Load and manage knowledge base
+    manage_knowledge_base(rag_assistant)
+
+    # Handle assistant runs
+    handle_assistant_runs(rag_assistant, llm_model, embeddings_model)
+
+
+def initialize_chat_history(user_id: str, chat_name: str) -> ChatHistory:
+    """Initialize chat history for the user."""
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
-    if not os.path.exists(user_dir):
-        os.makedirs(user_dir)
-        st.sidebar.success(f"User directory created at {user_dir}")
+    os.makedirs(user_dir, exist_ok=True)
     chat_history = ChatHistory(settings=settings, chat_name=chat_name)
     if "chat_name" not in st.session_state:
         st.session_state["chat_name"] = chat_name
     elif st.session_state["chat_name"] != chat_name:
         chat_history.rename(chat_name)
         st.session_state["chat_name"] = chat_name
-    models = []
-    chat_history_dir = os.path.join(user_dir, "chat_history")
-    if not os.path.exists(chat_history_dir):
-        os.makedirs(chat_history_dir)
-        for m in ollama.list()['models']:
-            models.append(m["name"])
+    return chat_history
 
-        default_llm_model = settings.default_llm_model
-        llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
-        # Model management feature toggle
-        feature_model_manager = settings.feature_model_manager
 
-        if feature_model_manager:
-            with st.expander("Model Management", expanded=False):
-                download_model_name = st.text_input("Enter Model Name to Download")
-                if st.button("Download Model"):
-                    if download_model_name:
-                        try:
-                            ollama.pull(download_model_name)
-                            st.success(f"Model '{download_model_name}' downloaded successfully.")
-                        except Exception as e:
-                            st.error(f"Failed to download model: {e}")
-                    else:
-                        st.warning("Please enter a model name to download.")
+def select_llm_model() -> str:
+    """Select the LLM model from available options."""
+    models = [m["name"] for m in ollama.list()['models']]
+    default_llm_model = settings.default_llm_model
+    llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
+    if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
+        st.session_state["llm_model"] = llm_model
+        restart_assistant()
+    return llm_model
 
-                if st.button("Delete Model"):
-                    try:
-                        selected_model = st.session_state["llm_model"]
-                        ollama.delete(selected_model)
-                        st.success(f"Model '{selected_model}' deleted successfully.")
-                    except Exception as e:
-                        st.error(f"Failed to delete model: {e}")
-        if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
-            st.session_state["llm_model"] = llm_model
-            restart_assistant()
 
-    # Get available embeddings models
+def manage_models(llm_model: str) -> None:
+    """Manage model download and deletion."""
+    if settings.feature_model_manager:
+        with st.expander("Model Management", expanded=False):
+            download_model_name = st.text_input("Enter Model Name to Download")
+            if st.button("Download Model"):
+                download_model(download_model_name)
+            if st.button("Delete Model"):
+                delete_model(llm_model)
+
+
+def download_model(model_name: str) -> None:
+    """Download a model by name."""
+    if model_name:
+        try:
+            ollama.pull(model_name)
+            st.success(f"Model '{model_name}' downloaded successfully.")
+        except Exception as e:
+            st.error(f"Failed to download model: {e}")
+    else:
+        st.warning("Please enter a model name to download.")
+
+
+def delete_model(model_name: str) -> None:
+    """Delete a model by name."""
+    try:
+        ollama.delete(model_name)
+        st.success(f"Model '{model_name}' deleted successfully.")
+    except Exception as e:
+        st.error(f"Failed to delete model: {e}")
+
+
+def select_embeddings_model() -> str:
+    """Select the embeddings model from available options."""
     available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
     default_embeddings_model = settings.default_embeddings_model
     embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model)
-    if embeddings_model_input not in available_embeddings_models:
-        st.warning(f"Model '{embeddings_model_input}' is not available. Using default '{default_embeddings_model}'.")
-        embeddings_model = default_embeddings_model
-    else:
-        embeddings_model = embeddings_model_input
-    # Set assistant_type in session state
+    embeddings_model = default_embeddings_model if embeddings_model_input not in available_embeddings_models else embeddings_model_input
     if "embeddings_model" not in st.session_state:
         st.session_state["embeddings_model"] = embeddings_model
-    # Restart the assistant if assistant_type has changed
     elif st.session_state["embeddings_model"] != embeddings_model:
         st.session_state["embeddings_model"] = embeddings_model
         st.session_state["embeddings_model_updated"] = True
         restart_assistant()
+    return embeddings_model
 
-    # Get the assistant
-    rag_assistant: Assistant
+
+def initialize_assistant(llm_model: str, embeddings_model: str) -> Assistant:
+    """Initialize or retrieve the RAG assistant."""
     if "rag_assistant" not in st.session_state or st.session_state["rag_assistant"] is None:
         logger.info(f"---*--- Creating {llm_model} Assistant ---*---")
         rag_assistant = get_rag_assistant(llm_model=llm_model, embeddings_model=embeddings_model)
         st.session_state["rag_assistant"] = rag_assistant
     else:
         rag_assistant = st.session_state["rag_assistant"]
+    return rag_assistant
 
-    # Create assistant run (i.e. log to database) and save run_id in session state
+
+def handle_chat_interaction(rag_assistant: Assistant) -> None:
+    """Handle chat interactions with the assistant."""
     try:
         st.session_state["rag_assistant_run_id"] = rag_assistant.create_run()
     except Exception:
@@ -131,18 +166,11 @@ def main() -> None:
 
     if "messages" not in st.session_state or not st.session_state["messages"]:
         assistant_chat_history = rag_assistant.memory.get_chat_history()
-        if len(assistant_chat_history) > 0:
-            logger.debug("Loading chat history")
-            st.session_state["messages"] = assistant_chat_history
-        else:
-            logger.debug("No chat history found")
-            st.session_state["messages"] = [{"role": "assistant", "content": ""}]
+        st.session_state["messages"] = assistant_chat_history if assistant_chat_history else [{"role": "assistant", "content": ""}]
 
-    # Prompt for user input
     if prompt := st.chat_input():
         st.session_state["messages"].append({"role": "user", "content": prompt})
 
-    # Display existing chat messages
     for message in st.session_state["messages"]:
         if message["role"] == "system":
             continue
@@ -160,54 +188,60 @@ def main() -> None:
                 resp_container.markdown(response)
             st.session_state["messages"].append({"role": "assistant", "content": response})
 
-    # Load knowledge base
+
+def manage_knowledge_base(rag_assistant: Assistant) -> None:
+    """Manage the knowledge base by adding URLs and PDFs."""
     if rag_assistant.knowledge_base:
-        # -*- Add websites to knowledge base
-        if "url_scrape_key" not in st.session_state:
-            st.session_state["url_scrape_key"] = 0
-
-        input_url = st.sidebar.text_input(
-            "Add URL to Knowledge Base", type="default", key=st.session_state["url_scrape_key"]
-        )
-        add_url_button = st.sidebar.button("Add URL")
-        if add_url_button:
-            if input_url is not None:
-                alert = st.sidebar.info("Processing URLs...", icon="ℹ️")
-                if f"{input_url}_scraped" not in st.session_state:
-                    scraper = WebsiteReader(max_links=2, max_depth=1)
-                    web_documents: List[Document] = scraper.read(input_url)
-                    if web_documents:
-                        rag_assistant.knowledge_base.load_documents(web_documents, upsert=True)
-                    else:
-                        st.sidebar.error("Could not read website")
-                    st.session_state[f"{input_url}_uploaded"] = True
-                alert.empty()
-
-        # Add PDFs to knowledge base
-        if "file_uploader_key" not in st.session_state:
-            st.session_state["file_uploader_key"] = 100
-
-        uploaded_file = st.sidebar.file_uploader(
-            "Add a PDF :page_facing_up:", type="pdf", key=st.session_state["file_uploader_key"]
-        )
-        if uploaded_file is not None:
-            alert = st.sidebar.info("Processing PDF...", icon="🧠")
-            rag_name = uploaded_file.name.split(".")[0]
-            if f"{rag_name}_uploaded" not in st.session_state:
-                reader = PDFReader()
-                rag_documents: List[Document] = reader.read(uploaded_file)
-                if rag_documents:
-                    rag_assistant.knowledge_base.load_documents(rag_documents, upsert=True)
-                else:
-                    st.sidebar.error("Could not read PDF")
-                st.session_state[f"{rag_name}_uploaded"] = True
-            alert.empty()
+        add_urls_to_knowledge_base(rag_assistant)
+        add_pdfs_to_knowledge_base(rag_assistant)
 
     if rag_assistant.knowledge_base and rag_assistant.knowledge_base.vector_db:
         if st.sidebar.button("Clear Knowledge Base"):
             rag_assistant.knowledge_base.vector_db.clear()
             st.sidebar.success("Knowledge base cleared")
 
+
+def add_urls_to_knowledge_base(rag_assistant: Assistant) -> None:
+    """Add URLs to the knowledge base."""
+    if "url_scrape_key" not in st.session_state:
+        st.session_state["url_scrape_key"] = 0
+
+    input_url = st.sidebar.text_input("Add URL to Knowledge Base", type="default", key=st.session_state["url_scrape_key"])
+    if st.sidebar.button("Add URL") and input_url:
+        alert = st.sidebar.info("Processing URLs...", icon="ℹ️")
+        if f"{input_url}_scraped" not in st.session_state:
+            scraper = WebsiteReader(max_links=2, max_depth=1)
+            web_documents: List[Document] = scraper.read(input_url)
+            if web_documents:
+                rag_assistant.knowledge_base.load_documents(web_documents, upsert=True)
+            else:
+                st.sidebar.error("Could not read website")
+            st.session_state[f"{input_url}_uploaded"] = True
+        alert.empty()
+
+
+def add_pdfs_to_knowledge_base(rag_assistant: Assistant) -> None:
+    """Add PDFs to the knowledge base."""
+    if "file_uploader_key" not in st.session_state:
+        st.session_state["file_uploader_key"] = 100
+
+    uploaded_file = st.sidebar.file_uploader("Add a PDF :page_facing_up:", type="pdf", key=st.session_state["file_uploader_key"])
+    if uploaded_file:
+        alert = st.sidebar.info("Processing PDF...", icon="🧠")
+        rag_name = uploaded_file.name.split(".")[0]
+        if f"{rag_name}_uploaded" not in st.session_state:
+            reader = PDFReader()
+            rag_documents: List[Document] = reader.read(uploaded_file)
+            if rag_documents:
+                rag_assistant.knowledge_base.load_documents(rag_documents, upsert=True)
+            else:
+                st.sidebar.error("Could not read PDF")
+            st.session_state[f"{rag_name}_uploaded"] = True
+        alert.empty()
+
+
+def handle_assistant_runs(rag_assistant: Assistant, llm_model: str, embeddings_model: str) -> None:
+    """Handle different assistant runs and allow for new runs."""
     if rag_assistant.storage:
         rag_assistant_run_ids: List[str] = rag_assistant.storage.get_all_run_ids()
         new_rag_assistant_run_id = st.sidebar.selectbox("Run ID", options=rag_assistant_run_ids)
