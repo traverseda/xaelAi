@@ -10,7 +10,10 @@ from phi.document.reader.pdf import PDFReader
 from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
 
+from settings import Settings
 from assistant import get_rag_assistant  # type: ignore
+
+settings = Settings()
 
 from ollama import Client
 
@@ -37,14 +40,15 @@ def restart_assistant():
 
 def main() -> None:
     # User identification
-    user_id = st.sidebar.text_input("Enter User ID")
+    user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
+    settings.set_user_id(user_id)
     if not user_id:
         st.sidebar.warning("Please enter a User ID to continue.")
         return
 
     # Create tabs for different sections
     tab1, tab2 = st.tabs(["Chat", "Configuration"])
-    user_data_path = os.getenv("USER_DATA_PATH", "/user_data")
+    user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
@@ -57,10 +61,10 @@ def main() -> None:
         for m in ollama.list()['models']:
             models.append(m["name"])
 
-        default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
+        default_llm_model = settings.default_llm_model
         llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
         # Model management feature toggle
-        feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
+        feature_model_manager = settings.feature_model_manager
 
         if feature_model_manager:
             with st.expander("Model Management", expanded=False):
@@ -92,7 +96,7 @@ def main() -> None:
 
         # Get available embeddings models
         available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
-        default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text")
+        default_embeddings_model = settings.default_embeddings_model
         embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model)
         if embeddings_model_input not in available_embeddings_models:
             st.warning(f"Model '{embeddings_model_input}' is not available. Using default '{default_embeddings_model}'.")
