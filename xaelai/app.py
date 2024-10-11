@@ -256,9 +256,15 @@ def display_previous_sessions() -> None:
     user_data_dir = os.path.join(settings.default_storage_dir, user_id or "default_user", "chat_history")
     storage = YamlStorage(storage_dir=user_data_dir)
     session_ids = storage.get_all_run_ids()
+    session_details = [(session_id, storage.read(session_id)) for session_id in session_ids]
 
     if session_ids:
-        selected_session = st.sidebar.selectbox("Restore Session", options=session_ids)
+        session_options = [
+            f"{session.run_name} - {session.run_id.split('T')[0]}" if session else session_id
+            for session_id, session in session_details
+        ]
+        selected_index = st.sidebar.selectbox("Restore Session", options=range(len(session_options)), format_func=lambda i: session_options[i])
+        selected_session = session_ids[selected_index]
         if st.sidebar.button("Restore"):
             st.session_state["rag_assistant_run_id"] = selected_session
             st.session_state["rag_assistant"] = None
