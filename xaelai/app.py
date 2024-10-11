@@ -1,4 +1,5 @@
 import os
+import shutil
 from typing import List
 
 import streamlit as st
@@ -33,7 +34,17 @@ def restart_assistant():
 
 
 def main() -> None:
-    # Get model
+    # User identification
+    user_id = st.sidebar.text_input("Enter User ID")
+    if not user_id:
+        st.sidebar.warning("Please enter a User ID to continue.")
+        return
+
+    # Create user directory if it doesn't exist
+    user_dir = os.path.join("user_data", user_id)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+        st.sidebar.success(f"User directory created at {user_dir}")
     models = []
     for m in ollama.list()['models']:
         models.append(m["name"])
