@@ -46,7 +46,10 @@ def main() -> None:
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
-    models = []
+    # Create chat history directory if it doesn't exist
+    chat_history_dir = os.path.join(user_dir, "chat_history")
+    if not os.path.exists(chat_history_dir):
+        os.makedirs(chat_history_dir)
     for m in ollama.list()['models']:
         models.append(m["name"])
 
@@ -136,7 +139,14 @@ def main() -> None:
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
-    # If last message is from a user, generate a new response
+    # Save chat history to a file
+    def save_chat_history():
+        import json
+        from datetime import datetime
+
+        chat_file = os.path.join(chat_history_dir, f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+        with open(chat_file, 'w') as f:
+            json.dump(st.session_state["messages"], f, indent=2)
     last_message = st.session_state["messages"][-1]
     if last_message.get("role") == "user":
         question = last_message["content"]
@@ -147,6 +157,7 @@ def main() -> None:
                 response += delta  # type: ignore
                 resp_container.markdown(response)
             st.session_state["messages"].append({"role": "assistant", "content": response})
+            save_chat_history()
 
     # Load knowledge base
     if rag_assistant.knowledge_base:
