@@ -48,12 +48,18 @@ def main() -> None:
 
     from chat_history import ChatHistory
     tab1, tab2 = st.tabs(["Chat", "Configuration"])
+    chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
-    chat_history = ChatHistory(file_name="chat_history.json", settings=settings)
+    chat_history = ChatHistory(settings=settings, chat_name=chat_name)
+    if "chat_name" not in st.session_state:
+        st.session_state["chat_name"] = chat_name
+    elif st.session_state["chat_name"] != chat_name:
+        chat_history.rename(chat_name)
+        st.session_state["chat_name"] = chat_name
     models = []
     chat_history_dir = os.path.join(user_dir, "chat_history")
     if not os.path.exists(chat_history_dir):
