@@ -131,13 +131,14 @@ def main() -> None:
         with open(os.path.join(chat_history_dir, selected_chat_file), 'r') as f:
             st.session_state["messages"] = json.load(f)
         st.sidebar.success(f"Loaded chat from {selected_chat_file}")
-    assistant_chat_history = rag_assistant.memory.get_chat_history()
-    if len(assistant_chat_history) > 0:
-        logger.debug("Loading chat history")
-        st.session_state["messages"] = assistant_chat_history
-    else:
-        logger.debug("No chat history found")
-        st.session_state["messages"] = [{"role": "assistant", "content": ""}]
+    if "messages" not in st.session_state or not st.session_state["messages"]:
+        assistant_chat_history = rag_assistant.memory.get_chat_history()
+        if len(assistant_chat_history) > 0:
+            logger.debug("Loading chat history")
+            st.session_state["messages"] = assistant_chat_history
+        else:
+            logger.debug("No chat history found")
+            st.session_state["messages"] = [{"role": "assistant", "content": ""}]
 
     # Prompt for user input
     if prompt := st.chat_input():
