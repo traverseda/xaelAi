@@ -49,7 +49,7 @@ def main() -> None:
         if st.sidebar.button("Download Model"):
             if download_model_name:
                 try:
-                    ollama.download(download_model_name)
+                    ollama.pull(download_model_name)
                     st.sidebar.success(f"Model '{download_model_name}' downloaded successfully.")
                 except Exception as e:
                     st.sidebar.error(f"Failed to download model: {e}")
