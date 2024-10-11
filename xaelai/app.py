@@ -65,7 +65,7 @@ def main() -> None:
 
 
         # Embeddings model selection
-        embeddings_model = select_embeddings_model()
+        embeddings_model = st.session_state.get("embeddings_model", settings.default_embeddings_model)
 
         # Initialize or retrieve the assistant
         rag_assistant = initialize_assistant(llm_model, embeddings_model)
@@ -83,7 +83,6 @@ def main() -> None:
         # Render settings UI
         settings.render_settings_ui()
         # Embeddings model selection
-        embeddings_model = select_embeddings_model()
         embeddings_model = select_embeddings_model()
 
         # Model selection and management
@@ -119,12 +118,11 @@ def select_llm_model() -> str:
 def manage_models(llm_model: str) -> None:
     """Manage model download and deletion."""
     if settings.feature_model_manager:
-        with st.expander("Model Management", expanded=False):
-            download_model_name = st.text_input("Enter Model Name to Download")
-            if st.button("Download Model"):
-                download_model(download_model_name)
-            if st.button("Delete Model"):
-                delete_model(llm_model)
+        download_model_name = st.text_input("Enter Model Name to Download")
+        if st.button("Download Model"):
+            download_model(download_model_name)
+        if st.button("Delete Model"):
+            delete_model(llm_model)
 
 
 def download_model(model_name: str) -> None:
