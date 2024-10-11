@@ -47,9 +47,9 @@ def main() -> None:
     # Initialize session state keys if they don't exist
     if "rag_assistant_run_id" not in st.session_state:
         st.session_state["rag_assistant_run_id"] = None
-    tab1, tab2, tab3 = st.tabs(["Main", "Settings", "File Manager"])
+    main_tab, settings_tab, file_manager_tab = st.tabs(["Main", "Settings", "File Manager"])
 
-    with tab1:
+    with main_tab:
         # User identification
         user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
         settings.set_user_id(user_id)
@@ -75,7 +75,7 @@ def main() -> None:
         # Handle assistant runs
         handle_assistant_runs(rag_assistant, llm_model, embeddings_model)
 
-    with tab2:
+    with settings_tab:
         # Render settings UI
         settings.render_settings_ui()
         # Embeddings model selection
@@ -86,7 +86,7 @@ def main() -> None:
         manage_models(llm_model)
 
 
-    with tab3:
+    with file_manager_tab:
         file_manager_ui()
     """Initialize chat history for the user."""
     chat_name = st.sidebar.text_input("Enter Chat Name", value="default_chat")
