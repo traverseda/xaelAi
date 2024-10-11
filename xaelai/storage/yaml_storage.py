@@ -2,7 +2,9 @@ import os
 import yaml
 from typing import Any, Dict, Optional
 
-class YamlStorage:
+from phi.storage.assistant.base import AssistantStorage
+
+class YamlStorage(AssistantStorage):
     def __init__(self, storage_dir: str):
         self.storage_dir = storage_dir
         os.makedirs(self.storage_dir, exist_ok=True)
