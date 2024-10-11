@@ -9,6 +9,8 @@ from phi.storage.assistant.base import AssistantStorage
 class GenericFileStorageBase(AssistantStorage):
     """
     GenericFileStorageBase is a base class for managing assistant runs using file storage.
+    It utilizes Universal Pathlib to support a variety of storage backends, including
+    in-memory, S3, WebDAV, and more.
     Subclasses should implement specific serialization and deserialization methods.
     """
 
