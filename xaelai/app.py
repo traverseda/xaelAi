@@ -126,6 +126,8 @@ def main() -> None:
 
     # Chat name input
     chat_name = st.sidebar.text_input("Chat Name", value="default_chat")
+    if "suggested_chat_name" not in st.session_state:
+        st.session_state["suggested_chat_name"] = None
     chat_files = [f for f in os.listdir(chat_history_dir) if f.endswith('.json')]
     selected_chat_file = st.sidebar.selectbox("Load Previous Chat", options=chat_files)
     if st.sidebar.button("Load Chat"):
@@ -162,7 +164,14 @@ def main() -> None:
         chat_file = os.path.join(chat_history_dir, f"{chat_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
         with open(chat_file, 'w') as f:
             json.dump(st.session_state["messages"], f, indent=2)
-    last_message = st.session_state["messages"][-1]
+    # Suggest a chat name after the first user message
+    if len(st.session_state["messages"]) == 1 and st.session_state["messages"][0]["role"] == "user":
+        first_message = st.session_state["messages"][0]["content"]
+        with st.spinner("Suggesting a chat name..."):
+            suggested_name = rag_assistant.run(f"Suggest a chat name based on this message: {first_message}")
+            st.session_state["suggested_chat_name"] = suggested_name.strip()
+            chat_name = st.sidebar.text_input("Chat Name", value=st.session_state["suggested_chat_name"])
+            
     if last_message.get("role") == "user":
         question = last_message["content"]
         with st.chat_message("assistant"):
