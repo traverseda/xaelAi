@@ -54,10 +54,10 @@ def main() -> None:
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
     chat_history = ChatHistory(file_name="chat_history.json", settings=settings)
-        models = []
-        chat_history_dir = os.path.join(user_dir, "chat_history")
-        if not os.path.exists(chat_history_dir):
-            os.makedirs(chat_history_dir)
+    models = []
+    chat_history_dir = os.path.join(user_dir, "chat_history")
+    if not os.path.exists(chat_history_dir):
+        os.makedirs(chat_history_dir)
         for m in ollama.list()['models']:
             models.append(m["name"])
 
