@@ -139,7 +139,6 @@ def main() -> None:
         if len(assistant_chat_history) > 0:
             logger.debug("Loading chat history")
             st.session_state["messages"] = assistant_chat_history
-            rag_assistant.memory.set_chat_history(st.session_state["messages"])
         else:
             logger.debug("No chat history found")
             st.session_state["messages"] = [{"role": "assistant", "content": ""}]
