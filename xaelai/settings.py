@@ -15,11 +15,11 @@ class Settings:
 
     def render_settings_ui(self):
         """Render the settings UI in Streamlit."""
-        st.sidebar.header("Settings")
-        self.user_data_path = st.sidebar.text_input("User Data Path", value=self.user_data_path)
-        self.default_llm_model = st.sidebar.text_input("Default LLM Model", value=self.default_llm_model)
-        self.default_embeddings_model = st.sidebar.text_input("Default Embeddings Model", value=self.default_embeddings_model)
-        self.feature_model_manager = st.sidebar.checkbox("Enable Model Manager", value=self.feature_model_manager)
+        st.header("Settings")
+        self.user_data_path = st.text_input("User Data Path", value=self.user_data_path)
+        self.default_llm_model = st.text_input("Default LLM Model", value=self.default_llm_model)
+        self.default_embeddings_model = st.text_input("Default Embeddings Model", value=self.default_embeddings_model)
+        self.feature_model_manager = st.checkbox("Enable Model Manager", value=self.feature_model_manager)
 
     def set_user_id(self, user_id):
         # Set user_id in session state
