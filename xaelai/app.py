@@ -152,7 +152,7 @@ def select_embeddings_model() -> str:
 def initialize_assistant(llm_model: str, embeddings_model: str) -> Assistant:
     """Initialize or retrieve the RAG assistant."""
     if "rag_assistant_run_id" not in st.session_state or st.session_state["rag_assistant_run_id"] is None:
-        st.session_state["rag_assistant_run_id"] = datetime.now().strftime("%Y%m%d")
+        st.session_state["rag_assistant_run_id"] = datetime.now().isoformat()
         logger.info(f"---*--- Creating {llm_model} Assistant ---*---")
         rag_assistant = get_rag_assistant(llm_model=llm_model, embeddings_model=embeddings_model)
         st.session_state["rag_assistant"] = rag_assistant

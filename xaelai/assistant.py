@@ -32,7 +32,7 @@ def get_rag_assistant(
 
     settings = Settings()
     if run_id is None:
-        run_id = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        run_id = datetime.now().isoformat()
     embedder = OllamaEmbedder(model=embeddings_model, dimensions=4096)
 
     knowledge_base = TextKnowledgeBase(
