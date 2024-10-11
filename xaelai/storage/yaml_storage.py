@@ -10,7 +10,9 @@ class GenericFileStorageBase(AssistantStorage):
     """
     GenericFileStorageBase is a base class for managing assistant runs using file storage.
     It utilizes Universal Pathlib to support a variety of storage backends, including
-    in-memory, S3, WebDAV, and more.
+    in-memory, S3, WebDAV, and more. Universal Pathlib extends the pathlib API to work
+    with different filesystems via fsspec, allowing seamless integration with various
+    storage protocols.
     Subclasses should implement specific serialization and deserialization methods.
     """
 
