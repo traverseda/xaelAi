@@ -41,44 +41,46 @@ def main() -> None:
         st.sidebar.warning("Please enter a User ID to continue.")
         return
 
-    # Create user directory if it doesn't exist
+    # Create tabs for different sections
+    tab1, tab2 = st.tabs(["Chat", "Configuration"])
     user_data_path = os.getenv("USER_DATA_PATH", "/user_data")
     user_dir = os.path.join(user_data_path, user_id)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
-    models = []
-    chat_history_dir = os.path.join(user_dir, "chat_history")
-    if not os.path.exists(chat_history_dir):
-        os.makedirs(chat_history_dir)
-    for m in ollama.list()['models']:
-        models.append(m["name"])
+    with tab2:
+        models = []
+        chat_history_dir = os.path.join(user_dir, "chat_history")
+        if not os.path.exists(chat_history_dir):
+            os.makedirs(chat_history_dir)
+        for m in ollama.list()['models']:
+            models.append(m["name"])
 
-    default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
-    llm_model = st.sidebar.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
-    # Model management feature toggle
-    feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
+        default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
+        llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
+        # Model management feature toggle
+        feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
 
-    if feature_model_manager:
-        with st.sidebar.expander("Model Management", expanded=False):
-            download_model_name = st.text_input("Enter Model Name to Download")
-            if st.button("Download Model"):
-                if download_model_name:
+        if feature_model_manager:
+            with st.expander("Model Management", expanded=False):
+                download_model_name = st.text_input("Enter Model Name to Download")
+                if st.button("Download Model"):
+                    if download_model_name:
+                        try:
+                            ollama.pull(download_model_name)
+                            st.success(f"Model '{download_model_name}' downloaded successfully.")
+                        except Exception as e:
+                            st.error(f"Failed to download model: {e}")
+                    else:
+                        st.warning("Please enter a model name to download.")
+
+                if st.button("Delete Model"):
                     try:
-                        ollama.pull(download_model_name)
-                        st.success(f"Model '{download_model_name}' downloaded successfully.")
+                        selected_model = st.session_state["llm_model"]
+                        ollama.delete(selected_model)
+                        st.success(f"Model '{selected_model}' deleted successfully.")
                     except Exception as e:
-                        st.error(f"Failed to download model: {e}")
-                else:
-                    st.warning("Please enter a model name to download.")
-
-            if st.button("Delete Model"):
-                try:
-                    selected_model = st.session_state["llm_model"]
-                    ollama.delete(selected_model)
-                    st.success(f"Model '{selected_model}' deleted successfully.")
-                except Exception as e:
-                    st.error(f"Failed to delete model: {e}")
+                        st.error(f"Failed to delete model: {e}")
     if "llm_model" not in st.session_state:
         st.session_state["llm_model"] = llm_model
     # Restart the assistant if assistant_type has changed
