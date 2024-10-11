@@ -262,12 +262,13 @@ def handle_assistant_runs(rag_assistant: Assistant, llm_model: str, embeddings_m
     if rag_assistant.storage:
         rag_assistant_run_ids: List[str] = rag_assistant.storage.get_all_run_ids()
         new_rag_assistant_run_id = st.sidebar.selectbox("Run ID", options=rag_assistant_run_ids)
-        if st.session_state["rag_assistant_run_id"] != new_rag_assistant_run_id:
+        if st.session_state.get("rag_assistant_run_id") != new_rag_assistant_run_id:
             logger.info(f"---*--- Loading {llm_model} run: {new_rag_assistant_run_id} ---*---")
             st.session_state["rag_assistant"] = get_rag_assistant(
                 llm_model=llm_model, embeddings_model=embeddings_model, run_id=new_rag_assistant_run_id
             )
-            st.rerun()
+            st.session_state["rag_assistant_run_id"] = new_rag_assistant_run_id
+            st.experimental_rerun()
 
     if st.sidebar.button("New Run"):
         restart_assistant()
