@@ -89,6 +89,7 @@ def main() -> None:
     with tab3:
         file_manager_ui()
     """Initialize chat history for the user."""
+    chat_name = st.sidebar.text_input("Enter Chat Name", value="default_chat")
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
     os.makedirs(user_dir, exist_ok=True)
