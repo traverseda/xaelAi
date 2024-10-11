@@ -21,6 +21,8 @@ class ChatHistory:
 
         old_file_path.rename(new_file_path)
         self.file_name = new_file_name
-    def __init__(self, file_name: str, user_data_path: str):
-        self.user_data_path = user_data_path
-        self.file_name = file_name
+    def __init__(self, settings: Settings, chat_name: str = "unnamed chat"):
+        self.user_data_path = Path(settings.user_data_path)
+        self.chat_history_dir = self.user_data_path / "chat_history"
+        self.chat_history_dir.mkdir(parents=True, exist_ok=True)
+        self.file_name = self._generate_file_name(chat_name)
