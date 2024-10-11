@@ -6,27 +6,29 @@ class InMemoryStorage(AssistantStorage):
     def __init__(self):
         self.storage = {}
 
-    def create(self, key: str, data: Dict[str, Any]) -> None:
+    def create(self, run_id: str) -> None:
         """Create a new entry in the storage."""
-        self.storage[key] = data
+        self.storage[run_id] = {}
 
-    def get_all_run_ids(self) -> List[str]:
+    def get_all_run_ids(self, user_id: Optional[str] = None) -> List[str]:
         """Get all run IDs from the storage."""
         return list(self.storage.keys())
 
-    def get_all_runs(self) -> List[Dict[str, Any]]:
+    def get_all_runs(self, user_id: Optional[str] = None) -> List[AssistantRun]:
         """Get all runs from the storage."""
-        return list(self.storage.values())
+        return [AssistantRun(**data) for data in self.storage.values()]
 
-    def read(self, key: str, run_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def read(self, run_id: str) -> Optional[AssistantRun]:
         """Read an entry from the storage."""
-        return self.storage.get(key)
+        data = self.storage.get(run_id)
+        return AssistantRun(**data) if data else None
 
-    def upsert(self, key: str, data: Dict[str, Any]) -> None:
+    def upsert(self, run: AssistantRun) -> Optional[AssistantRun]:
         """Update or insert an entry in the storage."""
-        self.storage[key] = data
+        self.storage[run.run_id] = run.__dict__
+        return run
 
-    def delete(self, key: str) -> None:
+    def delete(self, run_id: str) -> None:
         """Delete an entry from the storage."""
-        if key in self.storage:
-            del self.storage[key]
+        if run_id in self.storage:
+            del self.storage[run_id]
