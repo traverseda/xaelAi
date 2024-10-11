@@ -2,7 +2,7 @@ from settings import Settings
 from datetime import datetime
 
 class ChatHistory:
-    def __init__(self, chat_name: str, settings: Settings):
+    def __init__(self, chat_name: str = "unnamed chat", settings: Settings):
         self.user_data_path = settings.user_data_path
         self.file_name = self._generate_file_name(chat_name)
 
