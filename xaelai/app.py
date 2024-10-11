@@ -268,7 +268,7 @@ def handle_assistant_runs(rag_assistant: Assistant, llm_model: str, embeddings_m
                 llm_model=llm_model, embeddings_model=embeddings_model, run_id=new_rag_assistant_run_id
             )
             st.session_state["rag_assistant_run_id"] = new_rag_assistant_run_id
-            st.experimental_rerun()
+            st.rerun()
 
     if st.sidebar.button("New Run"):
         restart_assistant()
