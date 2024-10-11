@@ -13,7 +13,8 @@ from assistant import get_rag_assistant  # type: ignore
 
 from ollama import Client
 
-ollama = Client(host="ollama")
+ollama_host = os.getenv("OLLAMA_HOST", "ollama")
+ollama = Client(host=ollama_host)
 
 st.set_page_config(
     page_title="Xael AI",
