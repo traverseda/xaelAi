@@ -93,10 +93,7 @@ def main() -> None:
                     except Exception as e:
                         st.error(f"Failed to delete model: {e}")
     with tab2:
-        if "llm_model" not in st.session_state:
-            st.session_state["llm_model"] = llm_model
-        # Restart the assistant if assistant_type has changed
-        elif st.session_state["llm_model"] != llm_model:
+        if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
             st.session_state["llm_model"] = llm_model
             restart_assistant()
 
