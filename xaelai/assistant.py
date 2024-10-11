@@ -7,8 +7,8 @@ from phi.llm.ollama import Ollama
 from phi.embedder.ollama import OllamaEmbedder
 from phi.tools.duckduckgo import DuckDuckGo
 from phi.vectordb.pgvector import PgVector2
-from xaelai.storage.yaml_storage import YamlStorage
-from xaelai.settings import Settings
+from storage.yaml_storage import YamlStorage
+from settings import Settings
 from phi.tools.website import WebsiteTools
 from phi.tools.arxiv_toolkit import ArxivToolkit
 from phi.knowledge.text import TextKnowledgeBase
