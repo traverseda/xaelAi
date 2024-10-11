@@ -183,6 +183,17 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
+    last_message = st.session_state["messages"][-1]
+    if last_message.get("role") == "user":
+        question = last_message["content"]
+        with st.chat_message("assistant"):
+            response = ""
+            resp_container = st.empty()
+            for delta in rag_assistant.run(question):
+                response += delta  # type: ignore
+                resp_container.markdown(response)
+            st.session_state["messages"].append({"role": "assistant", "content": response})
+
     if prompt := st.chat_input("Type your message here..."):
         st.session_state["messages"].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
@@ -192,17 +203,6 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
             response = ""
             resp_container = st.empty()
             for delta in rag_assistant.run(prompt):
-                response += delta  # type: ignore
-                resp_container.markdown(response)
-            st.session_state["messages"].append({"role": "assistant", "content": response})
-
-    last_message = st.session_state["messages"][-1]
-    if last_message.get("role") == "user":
-        question = last_message["content"]
-        with st.chat_message("assistant"):
-            response = ""
-            resp_container = st.empty()
-            for delta in rag_assistant.run(question):
                 response += delta  # type: ignore
                 resp_container.markdown(response)
             st.session_state["messages"].append({"role": "assistant", "content": response})
