@@ -71,9 +71,11 @@ def main() -> None:
         restart_assistant()
 
     # Get Embeddings model
+    default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text")
     embeddings_model = st.sidebar.selectbox(
         "Select Embeddings",
         options=["nomic-embed-text", "llama3", "openhermes", "phi3"],
+        index=["nomic-embed-text", "llama3", "openhermes", "phi3"].index(default_embeddings_model),
         help="When you change the embeddings model, the documents will need to be added again.",
     )
     # Set assistant_type in session state
