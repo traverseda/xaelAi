@@ -24,7 +24,7 @@ class InMemoryStorage(AssistantStorage):
         data = self.storage.get(run_id)
         return AssistantRun(**data) if data else None
 
-    def upsert(self, run: AssistantRun) -> Optional[AssistantRun]:
+    def upsert(self, row: AssistantRun) -> Optional[AssistantRun]:
         """Update or insert an entry in the storage."""
         self.storage[run.run_id] = run.__dict__
         return run
