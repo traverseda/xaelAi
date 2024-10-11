@@ -45,13 +45,16 @@ def main() -> None:
 
     if feature_model_manager:
         st.sidebar.markdown("### Model Management")
+        download_model_name = st.sidebar.text_input("Enter Model Name to Download")
         if st.sidebar.button("Download Model"):
-            try:
-                selected_model = st.session_state["llm_model"]
-                ollama.download(selected_model)
-                st.sidebar.success(f"Model '{selected_model}' downloaded successfully.")
-            except Exception as e:
-                st.sidebar.error(f"Failed to download model: {e}")
+            if download_model_name:
+                try:
+                    ollama.download(download_model_name)
+                    st.sidebar.success(f"Model '{download_model_name}' downloaded successfully.")
+                except Exception as e:
+                    st.sidebar.error(f"Failed to download model: {e}")
+            else:
+                st.sidebar.warning("Please enter a model name to download.")
 
         if st.sidebar.button("Delete Model"):
             try:
