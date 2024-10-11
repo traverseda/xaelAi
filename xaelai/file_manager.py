@@ -23,23 +23,25 @@ def file_manager_ui():
     directories = [d for d in entries if os.path.isdir(os.path.join(current_dir, d))]
     files = [f for f in entries if os.path.isfile(os.path.join(current_dir, f))]
 
-    # Directory navigation
-    selected_dir = st.selectbox("Select a directory", options=[""] + directories)
-    if selected_dir:
-        st.session_state["current_dir"] = os.path.join(current_dir, selected_dir)
-        st.rerun()
+    # Directory navigation using buttons
+    st.subheader("Directories")
+    for directory in directories:
+        if st.button(f"Open {directory}"):
+            st.session_state["current_dir"] = os.path.join(current_dir, directory)
+            st.rerun()
 
-    # File selection and editing
-    selected_file = st.selectbox("Select a file to view/edit", options=[""] + files)
-    if selected_file:
-        file_path = os.path.join(current_dir, selected_file)
-        with open(file_path, "r") as f:
-            file_content = f.read()
-        new_content = st.text_area("Edit file", value=file_content, height=300)
-        if st.button("Save Changes"):
-            with open(file_path, "w") as f:
-                f.write(new_content)
-            st.success(f"Saved changes to {selected_file}")
+    # File selection and editing using buttons
+    st.subheader("Files")
+    for file in files:
+        if st.button(f"Edit {file}"):
+            file_path = os.path.join(current_dir, file)
+            with open(file_path, "r") as f:
+                file_content = f.read()
+            new_content = st.text_area(f"Edit {file}", value=file_content, height=300)
+            if st.button(f"Save Changes to {file}"):
+                with open(file_path, "w") as f:
+                    f.write(new_content)
+                st.success(f"Saved changes to {file}")
 
     # File upload
     uploaded_file = st.file_uploader("Upload a file", type=["txt", "pdf", "json"])
