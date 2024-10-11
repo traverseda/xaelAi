@@ -16,7 +16,7 @@ def file_manager_ui():
     st.write(f"Current Directory: {current_dir}")
     if st.button("Go Up"):
         st.session_state["current_dir"] = os.path.dirname(current_dir)
-        st.experimental_rerun()
+        st.rerun()
 
     # List directories and files
     entries = os.listdir(current_dir)
