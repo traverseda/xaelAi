@@ -92,7 +92,6 @@ def main() -> None:
     chat_name = st.sidebar.text_input("Enter Chat Name", value="default_chat")
     user_home_dir = os.path.join(settings.user_data_path, user_id)
     os.makedirs(user_home_dir, exist_ok=True)
-    os.makedirs(user_dir, exist_ok=True)
     chat_history = ChatHistory(settings=settings, chat_name=chat_name)
     if "chat_name" not in st.session_state:
         st.session_state["chat_name"] = chat_name
