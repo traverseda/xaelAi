@@ -70,14 +70,15 @@ def main() -> None:
         st.session_state["llm_model"] = llm_model
         restart_assistant()
 
-    # Get Embeddings model
+    # Get available embeddings models
+    available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
     default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text")
-    embeddings_model = st.sidebar.selectbox(
-        "Select Embeddings",
-        options=["nomic-embed-text", "llama3", "openhermes", "phi3"],
-        index=["nomic-embed-text", "llama3", "openhermes", "phi3"].index(default_embeddings_model),
-        help="When you change the embeddings model, the documents will need to be added again.",
-    )
+    embeddings_model_input = st.sidebar.text_input("Enter Embeddings Model", value=default_embeddings_model)
+    if embeddings_model_input not in available_embeddings_models:
+        st.sidebar.warning(f"Model '{embeddings_model_input}' is not available. Using default '{default_embeddings_model}'.")
+        embeddings_model = default_embeddings_model
+    else:
+        embeddings_model = embeddings_model_input
     # Set assistant_type in session state
     if "embeddings_model" not in st.session_state:
         st.session_state["embeddings_model"] = embeddings_model
