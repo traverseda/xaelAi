@@ -124,7 +124,8 @@ def main() -> None:
         st.warning("Could not create assistant, is the database running?")
         return
 
-    # Load previous chat history
+    # Chat name input
+    chat_name = st.sidebar.text_input("Chat Name", value="default_chat")
     chat_files = [f for f in os.listdir(chat_history_dir) if f.endswith('.json')]
     selected_chat_file = st.sidebar.selectbox("Load Previous Chat", options=chat_files)
     if st.sidebar.button("Load Chat"):
@@ -158,7 +159,7 @@ def main() -> None:
         import json
         from datetime import datetime
 
-        chat_file = os.path.join(chat_history_dir, f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+        chat_file = os.path.join(chat_history_dir, f"{chat_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
         with open(chat_file, 'w') as f:
             json.dump(st.session_state["messages"], f, indent=2)
     last_message = st.session_state["messages"][-1]
