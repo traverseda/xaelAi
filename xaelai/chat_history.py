@@ -5,7 +5,7 @@ from datetime import datetime
 class ChatHistory:
     def __init__(self, settings: Settings, chat_name: str = "unnamed chat"):
         self.user_data_path = Path(settings.user_data_path)
-        self.chat_history_dir = self.user_data_path / "chat_history"
+        self.chat_history_dir = self.user_data_path / settings.get_user_id() / "chat_history"
         self.chat_history_dir.mkdir(parents=True, exist_ok=True)
         self.file_name = self._generate_file_name(chat_name)
 
