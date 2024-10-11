@@ -9,7 +9,13 @@ class Settings:
         self.default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text")
         self.feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
 
-    def get_user_id(self):
+    def render_settings_ui(self):
+        """Render the settings UI in Streamlit."""
+        st.sidebar.header("Settings")
+        self.user_data_path = st.sidebar.text_input("User Data Path", value=self.user_data_path)
+        self.default_llm_model = st.sidebar.text_input("Default LLM Model", value=self.default_llm_model)
+        self.default_embeddings_model = st.sidebar.text_input("Default Embeddings Model", value=self.default_embeddings_model)
+        self.feature_model_manager = st.sidebar.checkbox("Enable Model Manager", value=self.feature_model_manager)
         # Load user_id from session state
         return st.session_state.get("user_id", "")
 

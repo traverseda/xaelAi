@@ -42,36 +42,44 @@ def restart_assistant():
 def main() -> None:
     """Main function to run the Xael AI application."""
     
-    # User identification
-    user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
-    settings.set_user_id(user_id)
-    if not user_id:
-        st.sidebar.warning("Please enter a User ID to continue.")
-        return
+    # Create tabs for different sections
+    tab1, tab2 = st.tabs(["Main", "Settings"])
 
-    # Initialize chat history
-    from chat_history import ChatHistory
-    chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
-    chat_history = initialize_chat_history(user_id, chat_name)
+    with tab1:
+        # User identification
+        user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
+        settings.set_user_id(user_id)
+        if not user_id:
+            st.sidebar.warning("Please enter a User ID to continue.")
+            return
 
-    # Model selection and management
-    llm_model = select_llm_model()
-    manage_models(llm_model)
+        # Initialize chat history
+        from chat_history import ChatHistory
+        chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
+        chat_history = initialize_chat_history(user_id, chat_name)
 
-    # Embeddings model selection
-    embeddings_model = select_embeddings_model()
+        # Model selection and management
+        llm_model = select_llm_model()
+        manage_models(llm_model)
 
-    # Initialize or retrieve the assistant
-    rag_assistant = initialize_assistant(llm_model, embeddings_model)
+        # Embeddings model selection
+        embeddings_model = select_embeddings_model()
 
-    # Create assistant run and handle chat messages
-    handle_chat_interaction(rag_assistant)
+        # Initialize or retrieve the assistant
+        rag_assistant = initialize_assistant(llm_model, embeddings_model)
 
-    # Load and manage knowledge base
-    manage_knowledge_base(rag_assistant)
+        # Create assistant run and handle chat messages
+        handle_chat_interaction(rag_assistant)
 
-    # Handle assistant runs
-    handle_assistant_runs(rag_assistant, llm_model, embeddings_model)
+        # Load and manage knowledge base
+        manage_knowledge_base(rag_assistant)
+
+        # Handle assistant runs
+        handle_assistant_runs(rag_assistant, llm_model, embeddings_model)
+
+    with tab2:
+        # Render settings UI
+        settings.render_settings_ui()
 
 
 def initialize_chat_history(user_id: str, chat_name: str) -> ChatHistory:
