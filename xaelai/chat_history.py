@@ -1,5 +1,5 @@
 from pathlib import Path
-from settings import Settings
+from xaelai.settings import Settings
 from datetime import datetime
 
 class ChatHistory:
