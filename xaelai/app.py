@@ -150,15 +150,16 @@ def delete_model(model_name: str) -> None:
 
 def select_embeddings_model() -> str:
     """Select the embeddings model from available options."""
-    available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
+    models = [m["name"] for m in ollama.list()['models']]
     default_embeddings_model = settings.default_embeddings_model
-    embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model, key="embeddings_model_input")
-    embeddings_model = default_embeddings_model if embeddings_model_input not in available_embeddings_models else embeddings_model_input
-    if "embeddings_model" not in st.session_state:
+    if default_embeddings_model not in models:
+        st.warning(f"Default embeddings model '{default_embeddings_model}' not found. Downloading...")
+        download_model(default_embeddings_model)
+        models = [m["name"] for m in ollama.list()['models']]  # Refresh the model list
+
+    embeddings_model = st.selectbox("Select Embeddings Model", options=models, index=models.index(default_embeddings_model))
+    if "embeddings_model" not in st.session_state or st.session_state["embeddings_model"] != embeddings_model:
         st.session_state["embeddings_model"] = embeddings_model
-    elif st.session_state["embeddings_model"] != embeddings_model:
-        st.session_state["embeddings_model"] = embeddings_model
-        st.session_state["embeddings_model_updated"] = True
         restart_assistant()
     return embeddings_model
 
