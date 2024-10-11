@@ -5,8 +5,8 @@ class Settings:
     def __init__(self):
         # Load settings from environment variables
         self.user_data_path = os.getenv("USER_DATA_PATH", "/user_data")
-        self.default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
-        self.default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text")
+        self.default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3.1:latest")
+        self.default_embeddings_model = os.getenv("DEFAULT_EMBEDDINGS_MODEL", "nomic-embed-text:latest")
         self.feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
 
     def get_user_id(self):
