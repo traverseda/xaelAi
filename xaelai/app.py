@@ -124,47 +124,6 @@ def main() -> None:
         st.warning("Could not create assistant, is the database running?")
         return
 
-    # Chat name input
-    chat_name = "default_chat"
-
-    def rename_chat_file(new_name):
-        new_file_name = f"{new_name}.json"
-        if selected_chat_file != new_file_name:
-            os.rename(
-                os.path.join(chat_history_dir, selected_chat_file),
-                os.path.join(chat_history_dir, new_file_name)
-            )
-            st.sidebar.success(f"Renamed chat to {new_file_name}")
-            st.experimental_rerun()
-
-    chat_name = st.sidebar.text_input("Chat Name", value="default_chat", on_change=rename_chat_file, args=(chat_name,))
-    if "suggested_chat_name" not in st.session_state:
-        st.session_state["suggested_chat_name"] = None
-    chat_files = [f for f in os.listdir(chat_history_dir) if f.endswith('.json')]
-    selected_chat_file = st.sidebar.selectbox("Load Previous Chat", options=chat_files)
-    
-    # Load chat
-    if st.sidebar.button("Load Chat"):
-        with open(os.path.join(chat_history_dir, selected_chat_file), 'r') as f:
-            st.session_state["messages"] = json.load(f)
-        st.sidebar.success(f"Loaded chat from {selected_chat_file}")
-
-    # Delete chat
-    if st.sidebar.button("Delete Chat"):
-        os.remove(os.path.join(chat_history_dir, selected_chat_file))
-        st.sidebar.success(f"Deleted chat {selected_chat_file}")
-        st.experimental_rerun()
-
-    # Rename chat
-    new_chat_name = st.sidebar.text_input("Rename Chat", value=selected_chat_file.replace('.json', ''))
-    if st.sidebar.button("Rename Chat"):
-        new_file_name = f"{new_chat_name}.json"
-        os.rename(
-            os.path.join(chat_history_dir, selected_chat_file),
-            os.path.join(chat_history_dir, new_file_name)
-        )
-        st.sidebar.success(f"Renamed chat to {new_file_name}")
-        st.experimental_rerun()
     if "messages" not in st.session_state or not st.session_state["messages"]:
         assistant_chat_history = rag_assistant.memory.get_chat_history()
         if len(assistant_chat_history) > 0:
@@ -185,21 +144,6 @@ def main() -> None:
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
-    # Save chat history to a file
-    def save_chat_history():
-        import json
-        from datetime import datetime
-
-        chat_file = os.path.join(chat_history_dir, f"{chat_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
-        with open(chat_file, 'w') as f:
-            json.dump(st.session_state["messages"], f, indent=2)
-    # Suggest a chat name after the first user message
-    if len(st.session_state["messages"]) == 1 and st.session_state["messages"][0]["role"] == "user":
-        first_message = st.session_state["messages"][0]["content"]
-        with st.spinner("Suggesting a chat name..."):
-            suggested_name = rag_assistant.run(f"Suggest a chat name based on this message: {first_message}")
-            st.session_state["suggested_chat_name"] = suggested_name.strip()
-            chat_name = st.sidebar.text_input("Chat Name", value=st.session_state["suggested_chat_name"])
     last_message = st.session_state["messages"][-1]
     if last_message.get("role") == "user":
         question = last_message["content"]
