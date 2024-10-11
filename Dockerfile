@@ -19,6 +19,7 @@ COPY ./xaelai/ .
 # Expose the port the application runs on (optional, if applicable)
 # EXPOSE 8000
 
-# Set the entrypoint or command for the container
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app
 CMD streamlit run app.py
 
