@@ -47,7 +47,6 @@ def main() -> None:
         return
 
     from chat_history import ChatHistory
-    tab1, tab2 = st.tabs(["Chat", "Configuration"])
     chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
@@ -92,28 +91,27 @@ def main() -> None:
                         st.success(f"Model '{selected_model}' deleted successfully.")
                     except Exception as e:
                         st.error(f"Failed to delete model: {e}")
-    with tab2:
-        if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
-            st.session_state["llm_model"] = llm_model
-            restart_assistant()
+    if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
+        st.session_state["llm_model"] = llm_model
+        restart_assistant()
 
-        # Get available embeddings models
-        available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
-        default_embeddings_model = settings.default_embeddings_model
-        embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model)
-        if embeddings_model_input not in available_embeddings_models:
-            st.warning(f"Model '{embeddings_model_input}' is not available. Using default '{default_embeddings_model}'.")
-            embeddings_model = default_embeddings_model
-        else:
-            embeddings_model = embeddings_model_input
-        # Set assistant_type in session state
-        if "embeddings_model" not in st.session_state:
-            st.session_state["embeddings_model"] = embeddings_model
-        # Restart the assistant if assistant_type has changed
-        elif st.session_state["embeddings_model"] != embeddings_model:
-            st.session_state["embeddings_model"] = embeddings_model
-            st.session_state["embeddings_model_updated"] = True
-            restart_assistant()
+    # Get available embeddings models
+    available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
+    default_embeddings_model = settings.default_embeddings_model
+    embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model)
+    if embeddings_model_input not in available_embeddings_models:
+        st.warning(f"Model '{embeddings_model_input}' is not available. Using default '{default_embeddings_model}'.")
+        embeddings_model = default_embeddings_model
+    else:
+        embeddings_model = embeddings_model_input
+    # Set assistant_type in session state
+    if "embeddings_model" not in st.session_state:
+        st.session_state["embeddings_model"] = embeddings_model
+    # Restart the assistant if assistant_type has changed
+    elif st.session_state["embeddings_model"] != embeddings_model:
+        st.session_state["embeddings_model"] = embeddings_model
+        st.session_state["embeddings_model_updated"] = True
+        restart_assistant()
 
     # Get the assistant
     rag_assistant: Assistant
