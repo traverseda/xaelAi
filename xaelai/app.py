@@ -262,7 +262,7 @@ def display_previous_sessions() -> None:
         if st.sidebar.button("Restore"):
             st.session_state["rag_assistant_run_id"] = selected_session
             st.session_state["rag_assistant"] = None
-            st.experimental_rerun()
+            st.rerun()
 def handle_assistant_runs(rag_assistant: Assistant, llm_model: str, embeddings_model: str) -> None:
     """Handle different assistant runs and allow for new runs."""
 
