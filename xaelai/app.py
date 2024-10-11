@@ -10,7 +10,7 @@ from phi.document.reader.pdf import PDFReader
 from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
 
-from .settings import Settings
+from xaelai.settings import Settings
 from assistant import get_rag_assistant  # type: ignore
 
 settings = Settings()
