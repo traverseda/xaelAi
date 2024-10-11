@@ -146,6 +146,8 @@ class GenericFileStorageBase(AssistantStorage):
         file_path = self.storage_dir / f"{run_id}.yaml"
         if file_path.exists():
             file_path.unlink()
+
+
 class YamlStorage(GenericFileStorageBase):
     """
     YamlStorage is a subclass of GenericFileStorageBase that uses YAML for serialization.
