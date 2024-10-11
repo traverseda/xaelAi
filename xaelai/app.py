@@ -56,16 +56,8 @@ def main() -> None:
             st.sidebar.warning("Please enter a User ID to continue.")
             return
 
-        # Initialize chat history
-        from chat_history import ChatHistory
-        chat_name = st.sidebar.text_input("Chat Name", value="unnamed chat")
-        chat_history = initialize_chat_history(user_id, chat_name)
-
-
-
         # Retrieve llm_model from session state
         llm_model = st.session_state.get("llm_model", settings.default_llm_model)
-
 
         # Embeddings model selection
         embeddings_model = st.session_state.get("embeddings_model", settings.default_embeddings_model)
