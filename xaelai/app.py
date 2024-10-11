@@ -125,6 +125,8 @@ def main() -> None:
         return
 
     # Chat name input
+    chat_name = "default_chat"
+
     def rename_chat_file(new_name):
         new_file_name = f"{new_name}.json"
         if selected_chat_file != new_file_name:
