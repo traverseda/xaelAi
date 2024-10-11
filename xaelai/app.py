@@ -46,7 +46,7 @@ def main() -> None:
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
-    # Create chat history directory if it doesn't exist
+    models = []
     chat_history_dir = os.path.join(user_dir, "chat_history")
     if not os.path.exists(chat_history_dir):
         os.makedirs(chat_history_dir)
