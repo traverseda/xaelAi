@@ -13,6 +13,7 @@ class ChatHistory:
         """Generate a file name based on the chat name and current date."""
         date_str = datetime.now().strftime("%Y-%m-%d")
         return f"{chat_name}_{date_str}.json"
+    def rename(self, new_chat_name: str):
         """Rename the chat history file, keeping the date the same but changing the name."""
         old_file_path = self.chat_history_dir / self.file_name
         new_file_name = self._generate_file_name(new_chat_name)
