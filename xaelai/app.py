@@ -56,25 +56,25 @@ def main() -> None:
     feature_model_manager = os.getenv("FEATURE_MODEL_MANAGER", "true").lower() == "true"
 
     if feature_model_manager:
-        st.sidebar.markdown("### Model Management")
-        download_model_name = st.sidebar.text_input("Enter Model Name to Download")
-        if st.sidebar.button("Download Model"):
-            if download_model_name:
-                try:
-                    ollama.pull(download_model_name)
-                    st.sidebar.success(f"Model '{download_model_name}' downloaded successfully.")
-                except Exception as e:
-                    st.sidebar.error(f"Failed to download model: {e}")
-            else:
-                st.sidebar.warning("Please enter a model name to download.")
+        with st.sidebar.expander("Model Management", expanded=False):
+            download_model_name = st.text_input("Enter Model Name to Download")
+            if st.button("Download Model"):
+                if download_model_name:
+                    try:
+                        ollama.pull(download_model_name)
+                        st.success(f"Model '{download_model_name}' downloaded successfully.")
+                    except Exception as e:
+                        st.error(f"Failed to download model: {e}")
+                else:
+                    st.warning("Please enter a model name to download.")
 
-        if st.sidebar.button("Delete Model"):
-            try:
-                selected_model = st.session_state["llm_model"]
-                ollama.delete(selected_model)
-                st.sidebar.success(f"Model '{selected_model}' deleted successfully.")
-            except Exception as e:
-                st.sidebar.error(f"Failed to delete model: {e}")
+            if st.button("Delete Model"):
+                try:
+                    selected_model = st.session_state["llm_model"]
+                    ollama.delete(selected_model)
+                    st.success(f"Model '{selected_model}' deleted successfully.")
+                except Exception as e:
+                    st.error(f"Failed to delete model: {e}")
     if "llm_model" not in st.session_state:
         st.session_state["llm_model"] = llm_model
     # Restart the assistant if assistant_type has changed
