@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pathlib import Path
+from upath import UPath
 import yaml
 from phi.assistant.run import AssistantRun
 
@@ -7,7 +7,7 @@ from phi.storage.assistant.base import AssistantStorage
 
 class InMemoryStorage(AssistantStorage):
     def __init__(self, storage_dir: str):
-        self.storage_dir = Path(storage_dir)
+        self.storage_dir = UPath(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
     def create(self, run_id: str) -> None:
