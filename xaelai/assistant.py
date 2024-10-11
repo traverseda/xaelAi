@@ -46,7 +46,8 @@ def get_rag_assistant(
     )
 
     # Set up YAML storage for the assistant
-    user_data_dir = os.path.join(settings.default_storage_dir, user_id or "default_user", "chat_history")
+    user_name = settings.get_user_name()  # Assuming there's a method to get the user name
+    user_data_dir = os.path.join(settings.default_storage_dir, user_name or "default_user", "chat_history")
     storage = YamlStorage(storage_dir=user_data_dir)
     assistant = Assistant(
         name="local_rag_assistant",
