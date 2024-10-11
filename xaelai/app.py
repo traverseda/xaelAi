@@ -125,7 +125,17 @@ def main() -> None:
         return
 
     # Chat name input
-    chat_name = st.sidebar.text_input("Chat Name", value="default_chat")
+    def rename_chat_file(new_name):
+        new_file_name = f"{new_name}.json"
+        if selected_chat_file != new_file_name:
+            os.rename(
+                os.path.join(chat_history_dir, selected_chat_file),
+                os.path.join(chat_history_dir, new_file_name)
+            )
+            st.sidebar.success(f"Renamed chat to {new_file_name}")
+            st.experimental_rerun()
+
+    chat_name = st.sidebar.text_input("Chat Name", value="default_chat", on_change=rename_chat_file, args=(chat_name,))
     if "suggested_chat_name" not in st.session_state:
         st.session_state["suggested_chat_name"] = None
     chat_files = [f for f in os.listdir(chat_history_dir) if f.endswith('.json')]
