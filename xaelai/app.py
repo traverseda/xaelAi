@@ -12,6 +12,7 @@ from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
 
 from settings import Settings
+from storage.yaml_storage import YamlStorage
 from assistant import get_rag_assistant  # type: ignore
 from file_manager import file_manager_ui
 
@@ -52,6 +53,9 @@ def main() -> None:
         if not user_id:
             st.sidebar.warning("Please enter a User ID to continue.")
             return
+
+        # Display previous sessions
+        display_previous_sessions()
 
         # Retrieve llm_model from session state
         llm_model = st.session_state.get("llm_model", settings.default_llm_model)
@@ -246,7 +250,19 @@ def add_pdfs_to_knowledge_base(rag_assistant: Assistant) -> None:
         alert.empty()
 
 
-def handle_assistant_runs(rag_assistant: Assistant, llm_model: str, embeddings_model: str) -> None:
+def display_previous_sessions() -> None:
+    """Display previous sessions in the sidebar and allow restoring them."""
+    user_id = settings.get_user_id()
+    user_data_dir = os.path.join(settings.default_storage_dir, user_id or "default_user", "chat_history")
+    storage = YamlStorage(storage_dir=user_data_dir)
+    session_ids = storage.get_all_run_ids()
+
+    if session_ids:
+        selected_session = st.sidebar.selectbox("Restore Session", options=session_ids)
+        if st.sidebar.button("Restore"):
+            st.session_state["rag_assistant_run_id"] = selected_session
+            st.session_state["rag_assistant"] = None
+            st.experimental_rerun()
     """Handle different assistant runs and allow for new runs."""
 
     if st.sidebar.button("New Run"):
