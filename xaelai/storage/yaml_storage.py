@@ -1,4 +1,5 @@
 from typing import Any, Dict, Optional, List
+from phi.assistant.run import AssistantRun
 
 from phi.storage.assistant.base import AssistantStorage
 
