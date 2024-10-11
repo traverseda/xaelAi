@@ -18,7 +18,7 @@ class InMemoryStorage(AssistantStorage):
         """Get all runs from the storage."""
         return list(self.storage.values())
 
-    def read(self, key: str) -> Optional[Dict[str, Any]]:
+    def read(self, key: str, run_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Read an entry from the storage."""
         return self.storage.get(key)
 
