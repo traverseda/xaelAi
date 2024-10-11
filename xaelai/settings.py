@@ -3,6 +3,7 @@ import streamlit as st
 
 class Settings:
     def __init__(self):
+        self.default_storage_dir = os.getenv("DEFAULT_STORAGE_DIR", "local://")
         # Load settings from environment variables
         self.user_data_path = os.getenv("USER_DATA_PATH", "/user_data")
         self.default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3.1:latest")
