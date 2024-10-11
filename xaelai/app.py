@@ -198,6 +198,14 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
         st.session_state["messages"].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.write(prompt)
+        # Send the prompt to the assistant and get a response
+        with st.chat_message("assistant"):
+            response = ""
+            resp_container = st.empty()
+            for delta in rag_assistant.run(prompt):
+                response += delta  # type: ignore
+                resp_container.markdown(response)
+            st.session_state["messages"].append({"role": "assistant", "content": response})
 
 
 
