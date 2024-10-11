@@ -91,9 +91,9 @@ def main() -> None:
                         st.success(f"Model '{selected_model}' deleted successfully.")
                     except Exception as e:
                         st.error(f"Failed to delete model: {e}")
-    if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
-        st.session_state["llm_model"] = llm_model
-        restart_assistant()
+        if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
+            st.session_state["llm_model"] = llm_model
+            restart_assistant()
 
     # Get available embeddings models
     available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
