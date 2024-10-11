@@ -9,6 +9,10 @@ from phi.utils.log import logger
 
 from assistant import get_rag_assistant  # type: ignore
 
+from ollama import Client
+
+ollama = Client(host="ollama")
+
 st.set_page_config(
     page_title="Xael AI",
     page_icon=":large_blue_circle:",
@@ -29,7 +33,11 @@ def restart_assistant():
 
 def main() -> None:
     # Get model
-    llm_model = st.sidebar.selectbox("Select Model", options=["llama3.1","llama3","llama3-groq-tool-use","phi3", "openhermes", "llama2"])
+    models = []
+    for m in ollama.list()['models']:
+        models.append(m["name"])
+
+    llm_model = st.sidebar.selectbox("Select Model", options=models)
     # Set assistant_type in session state
     if "llm_model" not in st.session_state:
         st.session_state["llm_model"] = llm_model
