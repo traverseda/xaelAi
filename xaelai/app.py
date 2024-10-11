@@ -150,7 +150,7 @@ def select_embeddings_model() -> str:
     """Select the embeddings model from available options."""
     available_embeddings_models = ["nomic-embed-text", "llama3", "openhermes", "phi3"]
     default_embeddings_model = settings.default_embeddings_model
-    embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model)
+    embeddings_model_input = st.text_input("Enter Embeddings Model", value=default_embeddings_model, key="embeddings_model_input")
     embeddings_model = default_embeddings_model if embeddings_model_input not in available_embeddings_models else embeddings_model_input
     if "embeddings_model" not in st.session_state:
         st.session_state["embeddings_model"] = embeddings_model
