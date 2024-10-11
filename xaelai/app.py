@@ -63,6 +63,9 @@ def main() -> None:
         # Retrieve llm_model from session state
         llm_model = st.session_state.get("llm_model", settings.default_llm_model)
 
+        # Embeddings model selection
+        embeddings_model = select_embeddings_model()
+
         # Initialize or retrieve the assistant
         rag_assistant = initialize_assistant(llm_model, embeddings_model)
 
