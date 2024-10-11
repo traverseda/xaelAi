@@ -46,14 +46,14 @@ def main() -> None:
         st.sidebar.warning("Please enter a User ID to continue.")
         return
 
-    # Create tabs for different sections
+    from chat_history import ChatHistory
     tab1, tab2 = st.tabs(["Chat", "Configuration"])
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
         st.sidebar.success(f"User directory created at {user_dir}")
-    with tab2:
+    chat_history = ChatHistory(file_name="chat_history.json", settings=settings)
         models = []
         chat_history_dir = os.path.join(user_dir, "chat_history")
         if not os.path.exists(chat_history_dir):
