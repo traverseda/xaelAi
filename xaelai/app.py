@@ -167,44 +167,30 @@ def initialize_assistant(llm_model: str, embeddings_model: str) -> Assistant:
 
 def handle_chat_interaction(rag_assistant: Assistant) -> None:
     """Handle chat interactions with the assistant."""
-    try:
-        st.session_state["rag_assistant_run_id"] = rag_assistant.create_run()
-    except Exception as e:
-        st.warning(f"Failed to create assistant: {e}")
-        return
+    # Initialize chat history if not present
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = []
 
-    if "messages" not in st.session_state or not st.session_state["messages"]:
-        assistant_chat_history = rag_assistant.memory.get_chat_history()
-        st.session_state["messages"] = assistant_chat_history if assistant_chat_history else [{"role": "assistant", "content": ""}]
-
+    # Display existing messages
     for message in st.session_state["messages"]:
-        if message["role"] == "system":
-            continue
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
-    last_message = st.session_state["messages"][-1]
-    if last_message.get("role") == "user":
-        question = last_message["content"]
-        with st.chat_message("assistant"):
-            response = ""
-            resp_container = st.empty()
-            for delta in rag_assistant.run(question):
-                response += delta  # type: ignore
-                resp_container.markdown(response)
-            st.session_state["messages"].append({"role": "assistant", "content": response})
-
+    # Input for new message
     if prompt := st.chat_input("Type your message here..."):
+        # Add user message to session state
         st.session_state["messages"].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.write(prompt)
-        # Send the prompt to the assistant and get a response
+
+        # Get response from assistant
         with st.chat_message("assistant"):
             response = ""
             resp_container = st.empty()
             for delta in rag_assistant.run(prompt):
                 response += delta  # type: ignore
                 resp_container.markdown(response)
+            # Add assistant response to session state
             st.session_state["messages"].append({"role": "assistant", "content": response})
 
 
