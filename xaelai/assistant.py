@@ -46,7 +46,7 @@ def get_rag_assistant(
     )
 
     # Set up YAML storage for the assistant
-    user_data_dir = os.path.join(settings.user_data_path, user_id or "default_user")
+    user_data_dir = os.path.join(settings.user_data_path, user_id or "default_user", "storage")
     storage = YamlStorage(storage_dir=user_data_dir)
     assistant = Assistant(
         name="local_rag_assistant",
