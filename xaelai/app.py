@@ -42,7 +42,9 @@ def restart_assistant():
 def main() -> None:
     """Main function to run the Xael AI application."""
     
-    # Create tabs for different sections
+    # Initialize session state keys if they don't exist
+    if "rag_assistant_run_id" not in st.session_state:
+        st.session_state["rag_assistant_run_id"] = None
     tab1, tab2 = st.tabs(["Main", "Settings"])
 
     with tab1:
