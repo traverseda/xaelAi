@@ -47,7 +47,7 @@ def main() -> None:
     # Initialize session state keys if they don't exist
     if "rag_assistant_run_id" not in st.session_state:
         st.session_state["rag_assistant_run_id"] = None
-    main_tab, settings_tab, file_manager_tab = st.tabs(["Main", "Settings", "File Manager"])
+    main_tab, file_manager_tab, settings_tab = st.tabs(["Main", "File Manager", "Settings"])
 
     with main_tab:
         # User identification
