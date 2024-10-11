@@ -11,6 +11,7 @@ from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
 
 from settings import Settings
+from chat_history import ChatHistory
 from assistant import get_rag_assistant  # type: ignore
 
 settings = Settings()
