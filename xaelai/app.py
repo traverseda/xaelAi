@@ -105,7 +105,12 @@ def select_llm_model() -> str:
     """Select the LLM model from available options."""
     models = [m["name"] for m in ollama.list()['models']]
     default_llm_model = settings.default_llm_model
-    llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
+    if default_llm_model not in models:
+        st.warning(f"Default model '{default_llm_model}' not found. Downloading...")
+        download_model(default_llm_model)
+        models = [m["name"] for m in ollama.list()['models']]  # Refresh the model list
+
+    llm_model = st.selectbox("Select Model", options=models, index=models.index(default_llm_model))
     if "llm_model" not in st.session_state or st.session_state["llm_model"] != llm_model:
         st.session_state["llm_model"] = llm_model
         restart_assistant()
