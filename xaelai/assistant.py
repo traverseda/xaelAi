@@ -14,6 +14,8 @@ from phi.embedder.ollama import OllamaEmbedder
 
 db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
 
+ollama_host = os.getenv("OLLAMA_HOST", "ollama")
+
 from tools.utils import utils
 from tools.homeassistant import homeassistant_tool
 
@@ -42,7 +44,7 @@ def get_rag_assistant(
         name="local_rag_assistant",
         run_id=run_id,
         user_id=user_id,
-        llm=Ollama(model=llm_model, host="ollama"),
+        llm=Ollama(model=llm_model, host=ollama_host),
         tools=[
             *utils,
             # *homeassistant_tool,
