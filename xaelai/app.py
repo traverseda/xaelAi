@@ -142,7 +142,6 @@ def main() -> None:
         else:
             logger.debug("No chat history found")
             st.session_state["messages"] = [{"role": "assistant", "content": ""}]
-            rag_assistant.memory.set_chat_history(st.session_state["messages"])
 
     # Prompt for user input
     if prompt := st.chat_input():
