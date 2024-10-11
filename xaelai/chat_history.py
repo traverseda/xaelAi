@@ -9,7 +9,10 @@ class ChatHistory:
         self.chat_history_dir.mkdir(parents=True, exist_ok=True)
         self.file_name = self._generate_file_name(chat_name)
 
-    def rename(self, new_chat_name: str):
+    def _generate_file_name(self, chat_name: str) -> str:
+        """Generate a file name based on the chat name and current date."""
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        return f"{chat_name}_{date_str}.json"
         """Rename the chat history file, keeping the date the same but changing the name."""
         old_file_path = self.chat_history_dir / self.file_name
         new_file_name = self._generate_file_name(new_chat_name)
