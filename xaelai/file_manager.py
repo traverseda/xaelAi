@@ -27,7 +27,7 @@ def file_manager_ui():
     selected_dir = st.selectbox("Select a directory", options=[""] + directories)
     if selected_dir:
         st.session_state["current_dir"] = os.path.join(current_dir, selected_dir)
-        st.experimental_rerun()
+        st.rerun()
 
     # File selection and editing
     selected_file = st.selectbox("Select a file to view/edit", options=[""] + files)
