@@ -8,7 +8,7 @@ from phi.llm.ollama import Ollama
 from phi.embedder.ollama import OllamaEmbedder
 from phi.tools.duckduckgo import DuckDuckGo
 from phi.vectordb.pgvector import PgVector2
-from storage.yaml_storage import YamlStorage
+from storage.yaml_storage import InMemoryStorage
 from settings import Settings
 from phi.tools.website import WebsiteTools
 from phi.tools.arxiv_toolkit import ArxivToolkit
@@ -47,7 +47,7 @@ def get_rag_assistant(
 
     # Set up YAML storage for the assistant
     user_data_dir = os.path.join(settings.user_data_path, user_id or "default_user", "storage")
-    storage = YamlStorage(storage_dir=user_data_dir)
+    storage = InMemoryStorage()
     assistant = Assistant(
         name="local_rag_assistant",
         run_id=run_id,
