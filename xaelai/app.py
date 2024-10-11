@@ -12,7 +12,6 @@ from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
 
 from settings import Settings
-from chat_history import ChatHistory
 from assistant import get_rag_assistant  # type: ignore
 from file_manager import file_manager_ui
 
@@ -85,17 +84,6 @@ def main() -> None:
 
     with file_manager_tab:
         file_manager_ui()
-    """Initialize chat history for the user."""
-    chat_name = st.sidebar.text_input("Enter Chat Name", value="default_chat")
-    user_home_dir = os.path.join(settings.user_data_path, user_id)
-    os.makedirs(user_home_dir, exist_ok=True)
-    chat_history = ChatHistory(settings=settings, chat_name=chat_name)
-    if "chat_name" not in st.session_state:
-        st.session_state["chat_name"] = chat_name
-    elif st.session_state["chat_name"] != chat_name:
-        chat_history.rename(chat_name)
-        st.session_state["chat_name"] = chat_name
-    return chat_history
 
 
 def select_llm_model() -> str:
