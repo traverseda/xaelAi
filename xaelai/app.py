@@ -14,6 +14,7 @@ from phi.utils.log import logger
 from settings import Settings
 from chat_history import ChatHistory
 from assistant import get_rag_assistant  # type: ignore
+from file_manager import file_manager_ui
 
 settings = Settings()
 
@@ -46,7 +47,7 @@ def main() -> None:
     # Initialize session state keys if they don't exist
     if "rag_assistant_run_id" not in st.session_state:
         st.session_state["rag_assistant_run_id"] = None
-    tab1, tab2 = st.tabs(["Main", "Settings"])
+    tab1, tab2, tab3 = st.tabs(["Main", "Settings", "File Manager"])
 
     with tab1:
         # User identification
@@ -85,7 +86,8 @@ def main() -> None:
         manage_models(llm_model)
 
 
-def initialize_chat_history(user_id: str, chat_name: str) -> ChatHistory:
+    with tab3:
+        file_manager_ui()
     """Initialize chat history for the user."""
     user_data_path = settings.user_data_path
     user_dir = os.path.join(user_data_path, user_id)
