@@ -30,6 +30,7 @@ def get_rag_assistant(
     debug_mode: bool = True,
 ) -> Assistant:
 
+    settings = Settings()
     if run_id is None:
         run_id = datetime.now().strftime("%Y%m%d%H%M%S")
     embedder = OllamaEmbedder(model=embeddings_model, dimensions=4096)
