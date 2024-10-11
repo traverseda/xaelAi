@@ -7,7 +7,7 @@ from phi.llm.ollama import Ollama
 from phi.embedder.ollama import OllamaEmbedder
 from phi.tools.duckduckgo import DuckDuckGo
 from phi.vectordb.pgvector import PgVector2
-from phi.storage.assistant.postgres import PgAssistantStorage
+from xaelai.storage.yaml_storage import YamlStorage
 from phi.tools.website import WebsiteTools
 from phi.tools.arxiv_toolkit import ArxivToolkit
 from phi.knowledge.text import TextKnowledgeBase
@@ -40,12 +40,15 @@ def get_rag_assistant(
         ),
     )
 
-    """Get a Local RAG Assistant."""
+    # Set up YAML storage for the assistant
+    user_data_dir = os.path.join(settings.user_data_path, user_id or "default_user")
+    storage = YamlStorage(storage_dir=user_data_dir)
     assistant = Assistant(
         name="local_rag_assistant",
         run_id=run_id,
         user_id=user_id,
         llm=Ollama(model=llm_model, host=ollama_host),
+        storage=storage,
         tools=[
             *utils,
             # *homeassistant_tool,
