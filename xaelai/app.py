@@ -177,8 +177,8 @@ def handle_chat_interaction(rag_assistant: Assistant) -> None:
     """Handle chat interactions with the assistant."""
     try:
         st.session_state["rag_assistant_run_id"] = rag_assistant.create_run()
-    except Exception:
-        st.warning("Could not create assistant, is the database running?")
+    except Exception as e:
+        st.warning(f"Failed to create assistant: {e}")
         return
 
     if "messages" not in st.session_state or not st.session_state["messages"]:
