@@ -8,6 +8,7 @@ from phi.embedder.ollama import OllamaEmbedder
 from phi.tools.duckduckgo import DuckDuckGo
 from phi.vectordb.pgvector import PgVector2
 from xaelai.storage.yaml_storage import YamlStorage
+from xaelai.settings import Settings
 from phi.tools.website import WebsiteTools
 from phi.tools.arxiv_toolkit import ArxivToolkit
 from phi.knowledge.text import TextKnowledgeBase
@@ -28,6 +29,7 @@ def get_rag_assistant(
     debug_mode: bool = True,
 ) -> Assistant:
 
+    settings = Settings()
     embedder = OllamaEmbedder(model=embeddings_model, dimensions=4096)
 
     knowledge_base = TextKnowledgeBase(
