@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import streamlit as st
@@ -37,7 +38,8 @@ def main() -> None:
     for m in ollama.list()['models']:
         models.append(m["name"])
 
-    llm_model = st.sidebar.selectbox("Select Model", options=models)
+    default_llm_model = os.getenv("DEFAULT_LLM_MODEL", "llama3")
+    llm_model = st.sidebar.selectbox("Select Model", options=models, index=models.index(default_llm_model) if default_llm_model in models else 0)
     # Set assistant_type in session state
     if "llm_model" not in st.session_state:
         st.session_state["llm_model"] = llm_model
