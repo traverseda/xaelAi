@@ -123,7 +123,13 @@ def main() -> None:
         st.warning("Could not create assistant, is the database running?")
         return
 
-    # Load existing messages
+    # Load previous chat history
+    chat_files = [f for f in os.listdir(chat_history_dir) if f.endswith('.json')]
+    selected_chat_file = st.sidebar.selectbox("Load Previous Chat", options=chat_files)
+    if st.sidebar.button("Load Chat"):
+        with open(os.path.join(chat_history_dir, selected_chat_file), 'r') as f:
+            st.session_state["messages"] = json.load(f)
+        st.sidebar.success(f"Loaded chat from {selected_chat_file}")
     assistant_chat_history = rag_assistant.memory.get_chat_history()
     if len(assistant_chat_history) > 0:
         logger.debug("Loading chat history")
