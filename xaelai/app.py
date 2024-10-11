@@ -59,8 +59,6 @@ def main() -> None:
         chat_history = initialize_chat_history(user_id, chat_name)
 
 
-        # Embeddings model selection
-        embeddings_model = select_embeddings_model()
 
         # Retrieve llm_model from session state
         llm_model = st.session_state.get("llm_model", settings.default_llm_model)
@@ -80,6 +78,9 @@ def main() -> None:
     with tab2:
         # Render settings UI
         settings.render_settings_ui()
+        # Embeddings model selection
+        embeddings_model = select_embeddings_model()
+
         # Model selection and management
         llm_model = select_llm_model()
         manage_models(llm_model)
