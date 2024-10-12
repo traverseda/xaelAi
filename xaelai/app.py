@@ -47,12 +47,12 @@ def main() -> None:
     main_tab, file_manager_tab, settings_tab = st.tabs(["Main", "File Manager", "Settings"])
 
     with main_tab:
-        # User identification
-        user_id = st.sidebar.text_input("Enter User ID", value=settings.get_user_id())
-        settings.set_user_id(user_id)
+        # User identification from headers
+        user_id = st.experimental_get_query_params().get("Username", [None])[0]
         if not user_id:
-            st.sidebar.warning("Please enter a User ID to continue.")
+            st.sidebar.warning("Username header is missing.")
             return
+        settings.set_user_id(user_id)
 
         # Display previous sessions
         display_previous_sessions()
