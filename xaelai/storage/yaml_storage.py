@@ -64,7 +64,12 @@ class GenericFileStorageBase(AssistantStorage):
         if file_path.exists():
             with file_path.open('r') as file:
                 data = self.deserialize(file)
-                return AssistantRun(**data)
+                try:
+                    return AssistantRun(**data)
+                except TypeError as e:
+                    print(f"Error creating AssistantRun: {e}")
+                    print(f"Data: {data}")
+                    return None
         return None
 
     def upsert(self, row: AssistantRun) -> Optional[AssistantRun]:
