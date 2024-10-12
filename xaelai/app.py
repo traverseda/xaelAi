@@ -119,13 +119,22 @@ def manage_models(llm_model: str) -> None:
             delete_model(llm_model)
 
 
+download_progress = {}
+
 def download_model(model_name: str) -> None:
-    """Download a model by name with progress."""
+    """Download a model by name with resumable progress."""
     if model_name:
         try:
+            if model_name not in download_progress:
+                download_progress[model_name] = 0
+
             with st.spinner(f"Downloading model '{model_name}'..."):
-                ollama.pull(model_name)
+                for progress in ollama.pull_with_progress(model_name):
+                    download_progress[model_name] = progress
+                    st.progress(progress)
+
             st.success(f"Model '{model_name}' downloaded successfully.")
+            del download_progress[model_name]
         except Exception as e:
             st.error(f"Failed to download model: {e}")
     else:
