@@ -292,6 +292,12 @@ def display_previous_sessions() -> None:
         ]
         selected_index = st.sidebar.selectbox("Restore Session", options=range(len(session_options)), format_func=lambda i: session_options[i])
         selected_session = session_ids[selected_index]
+        new_run_name = st.sidebar.text_input("Update Run Name", value=session_details[selected_index][1].run_name if session_details[selected_index][1] else "")
+        if st.sidebar.button("Update Name") and new_run_name:
+            session_details[selected_index][1].run_name = new_run_name
+            storage.write(session_ids[selected_index], session_details[selected_index][1])
+            st.sidebar.success("Run name updated successfully.")
+            
         if st.sidebar.button("Restore"):
             st.session_state["rag_assistant_run_id"] = selected_session
             st.session_state["rag_assistant"] = None
