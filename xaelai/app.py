@@ -120,10 +120,13 @@ def manage_models(llm_model: str) -> None:
 
 
 def download_model(model_name: str) -> None:
-    """Download a model by name."""
+    """Download a model by name with progress."""
     if model_name:
         try:
-            ollama.pull(model_name)
+            with st.spinner(f"Downloading model '{model_name}'..."):
+                progress_bar = st.progress(0)
+                for progress in ollama.pull_with_progress(model_name):
+                    progress_bar.progress(progress)
             st.success(f"Model '{model_name}' downloaded successfully.")
         except Exception as e:
             st.error(f"Failed to download model: {e}")
