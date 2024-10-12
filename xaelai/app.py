@@ -47,9 +47,9 @@ def main() -> None:
     main_tab, file_manager_tab, settings_tab = st.tabs(["Main", "File Manager", "Settings"])
 
     with main_tab:
-        # Retrieve headers and access token
+        # Retrieve headers and access the "Username"
         headers = st.context.headers
-        username = headers.get("Username")
+        username = headers.get("Username", None)
         if username is not None:
             # Authenticate the user or perform other actions
             st.sidebar.success(f"User '{username}' authenticated.")
