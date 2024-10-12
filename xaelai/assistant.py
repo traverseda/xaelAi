@@ -46,9 +46,10 @@ def get_rag_assistant(
     )
 
     # Set up YAML storage for the assistant
-    user_id = settings.get_user_id()
-    if user_id is None:
-        raise ValueError("User ID is not set. Please ensure you are properly authenticated.")
+    if not user_id:
+        user_id = settings.get_user_id()
+        if not user_id:
+            raise ValueError("User ID is not set. Please ensure you are properly authenticated.")
     user_data_dir = settings.get_user_data_dir(user_id) / "chat_history"
     storage = YamlStorage(storage_dir=user_data_dir)
     assistant = Assistant(

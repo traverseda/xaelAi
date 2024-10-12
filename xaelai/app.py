@@ -47,14 +47,15 @@ def main() -> None:
     main_tab, file_manager_tab, settings_tab = st.tabs(["Main", "File Manager", "Settings"])
 
     with main_tab:
-        # Retrieve headers and access the "Username"
+        # Retrieve headers and access the "User ID"
         headers = st.context.headers
-        username = headers.get("Username", None)
-        if username is None:
-            st.sidebar.error("Username is missing. Please ensure you are properly authenticated.")
-            raise ValueError("Username is missing. Please ensure you are properly authenticated.")
+        user_id = headers.get("User-ID", None)
+        if user_id is None:
+            st.sidebar.error("User ID is missing. Please ensure you are properly authenticated.")
+            raise ValueError("User ID is missing. Please ensure you are properly authenticated.")
         # Authenticate the user or perform other actions
-        st.sidebar.success(f"User '{username}' authenticated.")
+        st.sidebar.success(f"User '{user_id}' authenticated.")
+        settings.set_user_id(user_id)
 
         # Display previous sessions
         display_previous_sessions()
@@ -281,13 +282,12 @@ def add_pdfs_to_knowledge_base(rag_assistant: Assistant) -> None:
 
 def display_previous_sessions() -> None:
     """Display previous sessions in the sidebar and allow restoring them."""
-    # Retrieve headers and access the "Username"
-    headers = st.context.headers
-    username = headers.get("Username", None)
-    if username is None:
-        st.sidebar.error("Username is missing. Please ensure you are properly authenticated.")
-        raise ValueError("Username is missing. Please ensure you are properly authenticated.")
-    user_data_dir = settings.get_user_data_dir(username) / "chat_history"
+    # Retrieve user_id from session state
+    user_id = settings.get_user_id()
+    if not user_id:
+        st.sidebar.error("User ID is missing. Please ensure you are properly authenticated.")
+        raise ValueError("User ID is missing. Please ensure you are properly authenticated.")
+    user_data_dir = settings.get_user_data_dir(user_id) / "chat_history"
     storage = YamlStorage(storage_dir=user_data_dir)
     session_ids = storage.get_all_run_ids()
     session_details = [(session_id, storage.read(session_id)) for session_id in session_ids]
