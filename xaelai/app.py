@@ -50,12 +50,12 @@ def main() -> None:
     with main_tab:
         # Retrieve headers and access token
         headers = _get_websocket_headers()
-        access_token = headers.get("X-Access-Token")
-        if access_token is not None:
+        username = headers.get("Username")
+        if username is not None:
             # Authenticate the user or perform other actions
-            st.sidebar.success("Access token found and user authenticated.")
+            st.sidebar.success(f"User '{username}' authenticated.")
         else:
-            st.sidebar.warning("Access token is missing.")
+            st.sidebar.warning("Username is missing.")
             return
 
         # Display previous sessions
