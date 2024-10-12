@@ -14,7 +14,9 @@ class Settings:
         """Retrieve the user ID from the session state."""
         return st.session_state.get("user_id", "")
 
-    def render_settings_ui(self):
+    def get_user_data_dir(self, user_id: str) -> str:
+        """Get the user data directory for the given user ID."""
+        return os.path.join(self.default_storage_dir, user_id, "chat_history")
         """Render the settings UI in Streamlit."""
         st.header("Settings")
         st.subheader("Environment Variables (Read-Only)")
