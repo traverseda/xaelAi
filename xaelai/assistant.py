@@ -20,8 +20,7 @@ db_url = "postgresql+psycopg://ai:ai@pgvector:5432/ai"
 ollama_host = os.getenv("OLLAMA_HOST", "ollama")
 
 from tools.utils import utils
-from hello import hello
-from tools.homeassistant import homeassistant_tool
+# from tools.homeassistant import homeassistant_tool
 
 def get_rag_assistant(
     llm_model: str = "llama3",
