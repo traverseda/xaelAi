@@ -281,7 +281,12 @@ def add_pdfs_to_knowledge_base(rag_assistant: Assistant) -> None:
 
 def display_previous_sessions() -> None:
     """Display previous sessions in the sidebar and allow restoring them."""
-    user_id = settings.get_user_id()
+    # Retrieve headers and access the "Username"
+    headers = st.context.headers
+    username = headers.get("Username", None)
+    if username is None:
+        st.sidebar.error("Username is missing. Please ensure you are properly authenticated.")
+        raise ValueError("Username is missing. Please ensure you are properly authenticated.")
     user_data_dir = settings.get_user_data_dir(username) / "chat_history"
     storage = YamlStorage(storage_dir=user_data_dir)
     session_ids = storage.get_all_run_ids()
