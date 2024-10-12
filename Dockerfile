@@ -13,6 +13,9 @@ COPY pyproject.toml poetry.lock ./
 # Install project dependencies (without virtualenv creation)
 RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
+# Install watchdog for auto-reloading
+RUN pip install watchdog
+
 # Copy the rest of the application code
 COPY ./xaelai/ .
 
@@ -21,5 +24,5 @@ COPY ./xaelai/ .
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
-CMD streamlit run app.py
+CMD watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- streamlit run app.py
 
