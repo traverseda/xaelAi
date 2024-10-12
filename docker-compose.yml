@@ -56,8 +56,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'  # Limit to 1 CPU
-          memory: 512M  # Limit to 512MB of memory
+          cpus: '10.0'  # Limit to 10 CPUs
+          memory: 30G  # Limit to 30GB of memory
         reservations:
           devices:
           - driver: nvidia
