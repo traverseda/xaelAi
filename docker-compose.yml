@@ -55,6 +55,9 @@ services:
     runtime: nvidia
     deploy:
       resources:
+        limits:
+          cpus: '1.0'  # Limit to 1 CPU
+          memory: 512M  # Limit to 512MB of memory
         reservations:
           devices:
           - driver: nvidia
