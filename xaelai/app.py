@@ -10,6 +10,7 @@ from phi.document import Document
 from phi.document.reader.pdf import PDFReader
 from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
+from streamlit.web.server.websocket_headers import _get_websocket_headers
 
 from settings import Settings
 from storage.yaml_storage import YamlStorage
@@ -47,12 +48,15 @@ def main() -> None:
     main_tab, file_manager_tab, settings_tab = st.tabs(["Main", "File Manager", "Settings"])
 
     with main_tab:
-        # User identification from headers
-        user_id = st.experimental_get_query_params().get("Username", [None])[0]
-        if not user_id:
-            st.sidebar.warning("Username header is missing.")
+        # Retrieve headers and access token
+        headers = _get_websocket_headers()
+        access_token = headers.get("X-Access-Token")
+        if access_token is not None:
+            # Authenticate the user or perform other actions
+            st.sidebar.success("Access token found and user authenticated.")
+        else:
+            st.sidebar.warning("Access token is missing.")
             return
-        settings.set_user_id(user_id)
 
         # Display previous sessions
         display_previous_sessions()
