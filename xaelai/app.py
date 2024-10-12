@@ -191,8 +191,11 @@ def initialize_assistant(llm_model: str, embeddings_model: str) -> Assistant:
         logger.info(f"---*--- Creating {llm_model} Assistant ---*---")
         rag_assistant = get_rag_assistant(llm_model=llm_model, embeddings_model=embeddings_model)
         st.session_state["rag_assistant"] = rag_assistant
-    else:
+    elif "rag_assistant" in st.session_state:
         rag_assistant = st.session_state["rag_assistant"]
+    else:
+        rag_assistant = get_rag_assistant(llm_model=llm_model, embeddings_model=embeddings_model)
+        st.session_state["rag_assistant"] = rag_assistant
     return rag_assistant
 
 
