@@ -10,7 +10,6 @@ from phi.document import Document
 from phi.document.reader.pdf import PDFReader
 from phi.document.reader.website import WebsiteReader
 from phi.utils.log import logger
-from streamlit.web.server.websocket_headers import _get_websocket_headers
 
 from settings import Settings
 from storage.yaml_storage import YamlStorage
@@ -49,7 +48,7 @@ def main() -> None:
 
     with main_tab:
         # Retrieve headers and access token
-        headers = _get_websocket_headers()
+        headers = st.context.headers
         username = headers.get("Username")
         if username is not None:
             # Authenticate the user or perform other actions
