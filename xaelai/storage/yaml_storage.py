@@ -175,7 +175,19 @@ class GenericFileStorageBase(AssistantStorage):
             file_path.unlink()
 
 
+from typing import Dict
+
 class YamlStorage(GenericFileStorageBase):
+    def write(self, run_id: str, data: Dict) -> None:
+        """
+        Write data to a YAML file for the given run_id.
+
+        :param run_id: The unique identifier for the run.
+        :param data: The data to write to the file.
+        """
+        file_path = self.storage_dir / f"{run_id}.{self.file_extension}"
+        with file_path.open('w') as file:
+            self.serialize(data, file)
     """
     YamlStorage is a subclass of GenericFileStorageBase that uses YAML for serialization.
     """
