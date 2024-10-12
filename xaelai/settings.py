@@ -18,6 +18,7 @@ class Settings:
     def get_user_data_dir(self, user_id: str) -> str:
         """Get the user data directory for the given user ID."""
         return Path(self.default_storage_dir) / user_id
+    def render_settings_ui(self):
         """Render the settings UI in Streamlit."""
         st.header("Settings")
         st.subheader("Environment Variables (Read-Only)")
