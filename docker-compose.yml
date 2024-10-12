@@ -1,15 +1,34 @@
+networks:
+  core_proxy:
+    external: true
+
 services:
   ai:
     build: ./
-    ports:
-      - 8501:8501
-    volumes:
-      - ./data/:/data/
-    env_file: ".env"
+    # ports:
+    #   - 8501:8501
     volumes:
       - ./data_user/:/user_data/
-    extra_hosts:
-      - "hearth.local:172.25.26.209"
+      - ./data/:/data/
+    env_file: ".env"
+    # extra_hosts:
+    #   - "hearth.local:172.25.26.209"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.xaelai.rule=Host(`xaelai.outsidecontext.solutions`)"
+      - "traefik.http.routers.xaelai.entrypoints=websecure"
+      - traefik.http.services.xaelai.loadbalancer.server.port=8501
+      - "traefik.http.routers.xaelai.tls.certresolver=letsencrypt"
+      - traefik.http.routers.xaelai.middlewares=ldap_auth
+      # ldapAuth Options=================================================================
+      - traefik.http.middlewares.ldap_auth.plugin.ldapAuth.enabled=true
+      - traefik.http.middlewares.ldap_auth.plugin.ldapAuth.url=ldap://lldap
+      - traefik.http.middlewares.ldap_auth.plugin.ldapAuth.port=3890
+      - traefik.http.middlewares.ldap_auth.plugin.ldapAuth.baseDN=ou=people,dc=outsidecontext,dc=solutions
+      - traefik.http.middlewares.ldap_auth.plugin.ldapAuth.attribute=uid
+    networks:
+      - core_proxy
+      - default
 
   pgvector:
     image: phidata/pgvector:16
@@ -34,10 +53,11 @@ services:
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
+    runtime: nvidia
     deploy:
       resources:
         reservations:
           devices:
-           - driver: cdi
-             device_ids:
-                - nvidia.com/gpu=all
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
