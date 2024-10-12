@@ -146,6 +146,7 @@ def download_model(model_name: str) -> None:
                     completed = progress.get('completed', 0)
                     if total > 0:
                         progress_bar.progress(completed / total)
+                        st.write(f"Downloaded {completed} of {total} bytes ({completed / total:.2%})")
 
             st.success(f"Model '{model_name}' downloaded successfully.")
             del download_progress[model_name]
