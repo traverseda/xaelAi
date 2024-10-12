@@ -22,6 +22,7 @@ pint = "^0.24.3"
 universal-pathlib = "^0.2.5"
 streamlit-file-browser = "^3.2.22"
 flake8 = "^7.1.1"
+st-file-browser = "^0.1.1"
 
 
 [build-system]

@@ -49,7 +49,7 @@ def main() -> None:
     with main_tab:
         # Retrieve headers and access the "User ID"
         headers = st.context.headers
-        user_id = headers.get("User-ID", None)
+        user_id = headers.get("Username", None)
         if user_id is None:
             st.sidebar.error("User ID is missing. Please ensure you are properly authenticated.")
             raise ValueError("User ID is missing. Please ensure you are properly authenticated.")
