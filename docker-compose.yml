@@ -4,7 +4,9 @@ networks:
 
 services:
   ai:
-    build: ./
+    build:
+      context: ./
+      dockerfile: Dockerfile
     volumes:
       - ./data_user/:/user_data/
       - ./data/:/data/
