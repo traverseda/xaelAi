@@ -131,6 +131,7 @@ def download_model(model_name: str) -> None:
             with st.spinner(f"Downloading model '{model_name}'..."):
                 progress_bar = st.progress(0)
                 current_digest = ''
+                progress_message = st.empty()
                 total = 0
 
                 for progress in ollama.pull(model_name, stream=True):
@@ -148,7 +149,7 @@ def download_model(model_name: str) -> None:
                         progress_bar.progress(completed / total)
                         completed_gb = completed / (1024 ** 3)
                         total_gb = total / (1024 ** 3)
-                        st.write(f"Downloaded {completed_gb:.2f} GB of {total_gb:.2f} GB ({completed / total:.2%})", key=f"progress_{model_name}")
+                        progress_message.write(f"Downloaded {completed_gb:.2f} GB of {total_gb:.2f} GB ({completed / total:.2%})")
 
             st.success(f"Model '{model_name}' downloaded successfully.")
             del download_progress[model_name]
