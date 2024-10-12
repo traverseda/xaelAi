@@ -129,10 +129,23 @@ def download_model(model_name: str) -> None:
                 download_progress[model_name] = 0
 
             with st.spinner(f"Downloading model '{model_name}'..."):
-                progress_bar = st.progress(0)
-                for progress in ollama.pull_with_progress(model_name):
-                    download_progress[model_name] = progress
-                    progress_bar.progress(progress / 100)  # Assuming progress is a percentage
+                current_digest, bars = '', {}
+                for progress in ollama.pull(model_name, stream=True):
+                    digest = progress.get('digest', '')
+                    if digest != current_digest and current_digest in bars:
+                        bars[current_digest].close()
+
+                    if not digest:
+                        st.write(progress.get('status'))
+                        continue
+
+                    if digest not in bars and (total := progress.get('total')):
+                        bars[digest] = tqdm(total=total, desc=f'pulling {digest[7:19]}', unit='B', unit_scale=True)
+
+                    if completed := progress.get('completed'):
+                        bars[digest].update(completed - bars[digest].n)
+
+                    current_digest = digest
 
             st.success(f"Model '{model_name}' downloaded successfully.")
             del download_progress[model_name]
