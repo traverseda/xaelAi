@@ -17,7 +17,7 @@ RUN pip install watchdog
 COPY ./xaelai/ /app/xaelai
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /app/xaelai
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
