@@ -24,5 +24,5 @@ COPY ./xaelai/ .
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
-CMD watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- streamlit run app.py
+CMD watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- streamlit run xaelai/app.py
 
