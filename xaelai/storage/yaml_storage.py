@@ -154,7 +154,11 @@ class GenericFileStorageBase(AssistantStorage):
         if file_path.exists():
             with file_path.open('r') as file:
                 data = self.deserialize(file)
-                return AssistantRun(**data)
+                if data is not None:
+                    return AssistantRun(**data)
+                else:
+                    print(f"Warning: No data found for run_id {run_id}")
+                    return None
         return None
 
     def upsert(self, row: AssistantRun) -> Optional[AssistantRun]:
