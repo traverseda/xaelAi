@@ -124,9 +124,7 @@ def download_model(model_name: str) -> None:
     if model_name:
         try:
             with st.spinner(f"Downloading model '{model_name}'..."):
-                progress_bar = st.progress(0)
-                for progress in ollama.pull_with_progress(model_name):
-                    progress_bar.progress(progress)
+                ollama.pull(model_name)
             st.success(f"Model '{model_name}' downloaded successfully.")
         except Exception as e:
             st.error(f"Failed to download model: {e}")
