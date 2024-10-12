@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+from streamlit_file_browser import st_file_browser
 from settings import Settings
 
 def file_manager_ui():
