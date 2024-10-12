@@ -129,9 +129,10 @@ def download_model(model_name: str) -> None:
                 download_progress[model_name] = 0
 
             with st.spinner(f"Downloading model '{model_name}'..."):
+                progress_bar = st.progress(0)
                 for progress in ollama.pull_with_progress(model_name):
                     download_progress[model_name] = progress
-                    st.progress(progress)
+                    progress_bar.progress(progress / 100)  # Assuming progress is a percentage
 
             st.success(f"Model '{model_name}' downloaded successfully.")
             del download_progress[model_name]
