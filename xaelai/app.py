@@ -282,7 +282,7 @@ def add_pdfs_to_knowledge_base(rag_assistant: Assistant) -> None:
 def display_previous_sessions() -> None:
     """Display previous sessions in the sidebar and allow restoring them."""
     user_id = settings.get_user_id()
-    user_data_dir = settings.get_user_data_dir(username)
+    user_data_dir = settings.get_user_data_dir(username) / "chat_history"
     storage = YamlStorage(storage_dir=user_data_dir)
     session_ids = storage.get_all_run_ids()
     session_details = [(session_id, storage.read(session_id)) for session_id in session_ids]
