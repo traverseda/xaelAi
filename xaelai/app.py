@@ -304,7 +304,7 @@ def display_previous_sessions() -> None:
             if st.sidebar.button("Restore"):
                 st.session_state["rag_assistant_run_id"] = selected_session
                 st.session_state["rag_assistant"] = None
-                st.session_state["messages"] = selected_session_data.messages
+                st.session_state["messages"] = getattr(selected_session_data, "messages", [])
                 st.rerun()
         else:
             st.sidebar.warning("Selected session data is not available.")
