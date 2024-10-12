@@ -1,9 +1,10 @@
 import os
-from pathlib import Path
+from settings import Settings
 
 class FileManager:
-    def __init__(self, base_dir: str = str(Path.home())):
-        self.base_dir = Path(base_dir)
+    def __init__(self, user_id: str):
+        settings = Settings()
+        self.base_dir = settings.get_user_data_dir(user_id)
 
     def list_files(self):
         """List all files in the base directory."""
