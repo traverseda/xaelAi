@@ -7,6 +7,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    restart: unless-stopped
     volumes:
       - ./data_user/:/user_data/
       - ./data/:/data/
@@ -32,6 +33,7 @@ services:
   pgvector:
     image: phidata/pgvector:16
     container_name: pgvector
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ai
       POSTGRES_USER: ai
@@ -43,12 +45,12 @@ services:
     #   - "5532:5432"
   ollama:
     image: ollama/ollama:latest
+    restart: unless-stopped
     # ports:
     #   - 7869:11434
     volumes:
       - ./data_ollama/:/root/.ollama
     tty: true
-    restart: always
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
