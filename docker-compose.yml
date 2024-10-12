@@ -5,15 +5,11 @@ networks:
 services:
   ai:
     build: ./
-    # ports:
-    #   - 8501:8501
     volumes:
       - ./data_user/:/user_data/
       - ./data/:/data/
-      # - ./:/app  # Mount the current directory to /app in the container
+      - ./:/app  # Mount the current directory to /app in the container
     env_file: ".env"
-    # extra_hosts:
-    #   - "hearth.local:172.25.26.209"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.xaelai.rule=Host(`xaelai.outsidecontext.solutions`)"

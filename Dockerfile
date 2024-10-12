@@ -1,9 +1,6 @@
 # Use the official Python image as base
 FROM python:3.11-slim
 
-# Set the working directory inside the container
-WORKDIR /app
-
 # Install Poetry
 RUN pip install --no-cache-dir poetry
 
@@ -17,12 +14,12 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev --no-inter
 RUN pip install watchdog
 
 # Copy the rest of the application code
-COPY ./xaelai/ .
+COPY ./xaelai/ /app/xaelai
 
-# Expose the port the application runs on (optional, if applicable)
-# EXPOSE 8000
+# Set the working directory inside the container
+WORKDIR /app
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
-CMD watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- streamlit run xaelai/app.py
+CMD watchmedo auto-restart --directory=/app --pattern=*.py --recursive -- streamlit run xaelai/app.py
 
