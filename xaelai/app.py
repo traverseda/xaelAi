@@ -50,12 +50,11 @@ def main() -> None:
         # Retrieve headers and access the "Username"
         headers = st.context.headers
         username = headers.get("Username", None)
-        if username is not None:
-            # Authenticate the user or perform other actions
-            st.sidebar.success(f"User '{username}' authenticated.")
-        else:
-            st.sidebar.warning("Username is missing.")
-            return
+        if username is None:
+            st.sidebar.error("Username is missing. Please ensure you are properly authenticated.")
+            raise ValueError("Username is missing. Please ensure you are properly authenticated.")
+        # Authenticate the user or perform other actions
+        st.sidebar.success(f"User '{username}' authenticated.")
 
         # Display previous sessions
         display_previous_sessions()
